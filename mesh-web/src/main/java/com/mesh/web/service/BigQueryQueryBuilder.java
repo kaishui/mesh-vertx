@@ -73,6 +73,8 @@ public abstract class BigQueryQueryBuilder {
     sqlQuery.append("HAVING ").append(condition).append(" ");
   }
 
+  public abstract void distinct(boolean is_distinct);
+
   public String build(){
     return sqlQuery.toString();
   }
