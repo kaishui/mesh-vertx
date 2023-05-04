@@ -1,4 +1,4 @@
-package com.mesh.web_core;
+package com.mesh.web.core;
 
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;
