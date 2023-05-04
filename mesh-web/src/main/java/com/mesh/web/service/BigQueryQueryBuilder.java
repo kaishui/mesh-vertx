@@ -57,11 +57,21 @@ public abstract class BigQueryQueryBuilder {
     }
   }
 
-  public abstract void groupBy(String columns);
+  public void limit(int limit){
+    sqlQuery.append("LIMIT ").append(limit).append(" ");
+  }
 
-  public abstract void sortBy(String columns);
+  public void groupBy(String columns) {
+    sqlQuery.append("GROUP BY ").append(columns).append(" ");
+  }
 
-  public abstract void distinct(boolean is_distinct);
+  public void sortBy(String columns) {
+    sqlQuery.append("ORDER BY ").append(columns);
+  }
+
+  public void having(String condition){
+    sqlQuery.append("HAVING ").append(condition).append(" ");
+  }
 
   public String build(){
     return sqlQuery.toString();
