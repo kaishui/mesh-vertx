@@ -4,7 +4,6 @@ import io.vertx.core.Promise;
 import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -23,7 +22,7 @@ public class SpringVerticleFactoryTest {
   Vertx vertx = Vertx.vertx();
 
 
-  @Before
+//  @Before
   public void setUp() throws Exception {
     // Initialize mocks created above
 //    MockitoAnnotations.initMocks(context);    // Change behaviour of `resource`

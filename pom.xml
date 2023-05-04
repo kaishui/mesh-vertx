@@ -11,7 +11,7 @@
   <name>${project.artifactId}</name>
   <modules>
     <module>web-core</module>
-    <!--        <module>mesh-web</module>-->
+            <module>mesh-web</module>
     <!--        <module>mesh-service</module>-->
   </modules>
 
@@ -40,6 +40,13 @@
 
   <dependencyManagement>
     <dependencies>
+
+      <dependency>
+        <groupId>com.mesh</groupId>
+        <artifactId>web-core</artifactId>
+        <version>${revision}</version>
+      </dependency>
+
       <dependency>
         <groupId>io.vertx</groupId>
         <artifactId>vertx-stack-depchain</artifactId>
