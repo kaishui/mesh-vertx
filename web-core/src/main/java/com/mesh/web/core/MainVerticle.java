@@ -1,8 +1,12 @@
-package com.mesh.web_core;
+package com.mesh.web.core;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
+@Component
+@Slf4j
 public class MainVerticle extends AbstractVerticle {
 
   @Override
