@@ -279,14 +279,12 @@ public class JsonToSql {
               sb.append(parseSwitch((JsonObject) v)).append(" as ").append(key).append(", ");
             }
           }
-        } else if (val instanceof String str) {
+        } else // 如果值是其他类型，忽略该键值对
+          if (val instanceof String str) {
           // 如果值是一个字符串，表示有别名操作符，如$as, $alias等，用as关键字表示，并给结果起别名为值
           if (isAliasOperator(str)) {
             sb.append(parseAliasOperator(str, key)).append(", ");
           }
-        } else {
-          // 如果值是其他类型，忽略该键值对
-          continue;
         }
       }
       // 去掉最后多余的逗号
@@ -322,9 +320,6 @@ public class JsonToSql {
       } else if (key.equals("default")) {
         // 如果键是default，表示有默认值，根据值的类型进行处理
         sb.append("else ").append(val).append(" ");
-      } else {
-        // 如果键是其他类型，忽略该键值对
-        continue;
       }
     }
     sb.append("end");
@@ -380,13 +375,7 @@ public class JsonToSql {
             sb.append(key).append(" asc, ");
           } else if (num.intValue() == -1) {
             sb.append(key).append(" desc, ");
-          } else {
-            // 如果值是其他数字，忽略该键值对
-            continue;
           }
-        } else {
-          // 如果值是其他类型，忽略该键值对
-          continue;
         }
       }
       // 去掉最后多余的逗号
