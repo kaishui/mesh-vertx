@@ -1,7 +1,7 @@
 package com.mesh.web.service;
 
 import com.mesh.web.entity.SQL;
-import com.mesh.web.instance.CommonInstance;
+import com.mesh.web.constant.CommonConstants;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class SimpleBigQueryDirectorServiceImpl implements SQLDirectorService{
 
   @Override
   public String type() {
-    return CommonInstance.BIG_QUERY;
+    return CommonConstants.BIG_QUERY;
   }
 
   @Override

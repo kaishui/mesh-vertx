@@ -1,7 +1,7 @@
 package com.mesh.web.service.impl;
 
 import com.mesh.web.entity.SQL;
-import com.mesh.web.instance.CommonInstance;
+import com.mesh.web.constant.CommonConstants;
 import com.mesh.web.service.SQLBuilder;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +57,6 @@ public class BigQuerySQLBuilder implements SQLBuilder {
 
   @Override
   public String type() {
-    return CommonInstance.BIG_QUERY;
+    return CommonConstants.BIG_QUERY;
   }
 }

@@ -1,6 +1,6 @@
 package com.mesh.web.service;
 
-import com.mesh.web.instance.CommonInstance;
+import com.mesh.web.constant.CommonConstants;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,7 +72,7 @@ class SimpleBigQueryDirectorServiceImplTest {
 //    SimpleBigQueryDirectorServiceImpl director = new SimpleBigQueryDirectorServiceImpl();
     SQLBuilder builder = director.getSqlBuilder();
 
-    assertEquals(CommonInstance.BIG_QUERY, builder.type());
+    assertEquals(CommonConstants.BIG_QUERY, builder.type());
   }
 
 
