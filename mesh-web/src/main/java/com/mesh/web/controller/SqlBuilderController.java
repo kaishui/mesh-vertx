@@ -19,6 +19,21 @@ public class SqlBuilderController implements RouterInterface {
   @Override
   public void router(Router router) {
     router.post("/generate/sql").handler(this::generateSql);
+    router.post("/run/sql").handler(this::runSql);
+  }
+
+  private void runSql(RoutingContext routingContext) {
+    log.info("run sql, parameter: {}", routingContext.body().asJsonObject());
+
+    JsonObject jsonObject = routingContext.body().asJsonObject();
+
+    //TODO: Validate json structure and sorting strategy - $project $from $match $group
+
+    String sql = strategyContextService.parse(jsonObject);
+    log.info("sql: {}", sql);
+//    TODO: call jdbc query
+
+    routingContext.response().setStatusCode(200).end(sql);
   }
 
   private void generateSql(RoutingContext routingContext) {
