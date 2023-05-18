@@ -5,9 +5,8 @@ import lombok.experimental.FieldNameConstants;
 @FieldNameConstants
 public class CommonConstants {
 
-  public static final String BIG_QUERY = "BigQuery";
-  public static final String FUNCTION = "function";
-  public static final String ALIAS = "alias";
-  public static final String LOGICAL = "logical";
-  public static final String COMPARISON = "comparison";
+  public static final String FUNCTION = "$sum,$avg,$count,$min,$max,";
+  public static final String ALIAS = "$as,$alias,";
+  public static final String LOGICAL = "$and,$or,$not,";
+  public static final String COMPARISON = "$gt,$lt,$eq,$gte,$lte,$ne,";
 }

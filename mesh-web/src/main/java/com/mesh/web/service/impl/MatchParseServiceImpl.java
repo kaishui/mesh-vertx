@@ -34,7 +34,7 @@ public class MatchParseServiceImpl implements ParseStrategyService {
         Object val = object.getValue(key);
         // 如果键是一个逻辑操作符，如$or, $and, $not等，用相应的sql关键字表示，并用括号包围
         if (OperatorUtil.isLogicalOperator(key)) {
-          sb.append("(").append(operationContextService.getOperation(CommonConstants.LOGICAL).doOperation(key, val)).append(")");
+          sb.append(operationContextService.getOperation(key).doOperation(key, val));
         } else {
           // 如果键是一个字段名，根据值的类型进行处理
           if (val instanceof JsonObject obj) {
@@ -42,7 +42,7 @@ public class MatchParseServiceImpl implements ParseStrategyService {
             for (String k : obj.fieldNames()) {
               Object v = obj.getValue(k);
               if (OperatorUtil.isComparisonOperator(k)) {
-                sb.append(key).append(operationContextService.getOperation(CommonConstants.COMPARISON).doOperation(k, v));
+                sb.append(key).append(operationContextService.getOperation(key).doOperation(k, v));
               }
             }
           } else if (val instanceof JsonArray array) {

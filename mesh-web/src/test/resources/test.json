@@ -1,0 +1,41 @@
+{
+  "$from": [
+    "table1"
+  ],
+  "$project": {
+    "column1": 1,
+    "column2": 1,
+    "sum": {
+      "$add": [
+        "column3",
+        "column4"
+      ]
+    }
+  },
+  "$lookup": [
+    {
+      "from": "table2",
+      "type": "left",
+      "localField": "table1.id",
+      "foreignField": "table2.id"
+    }
+  ],
+  "$match": {
+    "column1": "funCode1",
+    "$or": [
+      {
+        "score": {
+          "$gt": 70,
+          "$lt": 90
+        }
+      },
+      {
+        "views": {
+          "$gte": 1000
+        }
+      }
+    ]
+  },
+  "$limit": 100,
+  "$skip": 100
+}

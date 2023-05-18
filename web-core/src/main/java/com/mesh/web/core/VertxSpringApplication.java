@@ -18,6 +18,9 @@ import org.springframework.context.support.AbstractApplicationContext;
 @Configuration
 @Slf4j
 public class VertxSpringApplication {
+
+  public static Vertx vertx;
+
   public static void main(String[] args) {
     System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory");
 
@@ -31,7 +34,7 @@ public class VertxSpringApplication {
     VertxOptions options = new VertxOptions().setClusterManager(mgr);
     Vertx.clusteredVertx(options, ar -> {
       if (ar.succeeded()) {
-        Vertx vertx = ar.result();
+        vertx = ar.result();
 
         // 创建 Spring 上下文
         AbstractApplicationContext context = new AnnotationConfigApplicationContext(VertxSpringApplication.class);

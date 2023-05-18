@@ -1,6 +1,7 @@
 package com.mesh.web.service.impl;
 
 import com.mesh.web.constant.CommonConstants;
+import com.mesh.web.service.OperationContextService;
 import com.mesh.web.service.OperationService;
 import com.mesh.web.service.StrategyContextService;
 import io.vertx.core.json.JsonArray;
@@ -14,6 +15,10 @@ import org.springframework.stereotype.Service;
 public class LogicalOperatorServiceImpl implements OperationService {
   @Autowired
   private StrategyContextService strategyContextService;
+
+  @Autowired
+  private OperationContextService operationContextService;
+
   @Override
   public String doOperation(String key, Object value) {
     return switch (key) {
@@ -41,7 +46,7 @@ public class LogicalOperatorServiceImpl implements OperationService {
       for (int i = 0; i < array.size(); i++) {
         Object elem = array.getValue(i);
         if (elem instanceof JsonObject) {
-          sb.append(parseCondition((JsonObject) elem));
+          sb.append(" ( ").append(parseCondition((JsonObject) elem)).append(" ) ");
         } else if (elem instanceof JsonArray) {
           sb.append(parseArrayOperator(op, elem));
         } else {
@@ -67,79 +72,9 @@ public class LogicalOperatorServiceImpl implements OperationService {
     for (String key : condition.fieldNames()) {
       // 获取键对应的值，它可能是一个整数，一个字符串数组，一个json对象或者一个对象数组，表示不同的比较或者逻辑操作
       Object value = condition.getValue(key);
+
       // 根据不同的键，拼接相应的条件语句
-      switch (key) {
-        case "$or" -> {
-          // 拼接或操作，如(score > 70 and score < 90 ) or views >= 1000
-          sb.append("(");
-          JsonArray orArray = (JsonArray) value;
-          for (int i = 0; i < orArray.size(); i++) {
-            JsonObject orObj = orArray.getJsonObject(i);
-            sb.append(parseCondition(orObj)).append(" or ");
-          }
-          sb.delete(sb.length() - 4, sb.length());
-          sb.append(")");
-        }
-        case "$and" -> {
-          // 拼接与操作，如avg(scores) >= 80 and avg(scores) < 90
-          sb.append("(");
-          JsonArray andArray = (JsonArray) value;
-          for (int i = 0; i < andArray.size(); i++) {
-            JsonObject andObj = andArray.getJsonObject(i);
-            sb.append(parseCondition(andObj)).append(" and ");
-          }
-          sb.delete(sb.length() - 5, sb.length());
-          sb.append(")");
-        }
-        case "$gt" -> {
-          // 拼接大于操作，如score > 70
-          int gtValue = (Integer) value;
-          sb.append(key).append(" > ").append(gtValue);
-        }
-        case "$lt" -> {
-          // 拼接小于操作，如score < 90
-          int ltValue = (Integer) value;
-          sb.append(key).append(" < ").append(ltValue);
-        }
-        case "$gte" -> {
-          // 拼接大于等于操作，如views >= 1000
-          int gteValue = (Integer) value;
-          sb.append(key).append(" >= ").append(gteValue);
-        }
-        case "$avg" -> {
-          // 拼接平均操作，如avg(scores)
-          String avgColumn = (String) value;
-          sb.append("avg(").append(avgColumn).append(")");
-        }
-        default -> {
-          // 如果键不是以上的特殊操作符，表示是一个列名，如score或views
-          // 获取值对应的json对象，表示要进行的比较操作，如{ $gt: 70, $lt: 90 }
-          JsonObject compareObj = (JsonObject) value;
-          // 遍历比较对象的键集合
-          for (String compareKey : compareObj.fieldNames()) {
-            // 获取键对应的值，它是一个整数，表示要比较的数值，如70或90
-            int compareValue = compareObj.getInteger(compareKey);
-            // 根据不同的比较键，拼接相应的条件语句
-            switch (compareKey) {
-              case "$gt" ->
-                // 拼接大于操作，如score > 70
-                sb.append(key).append(" > ").append(compareValue);
-              case "$lt" ->
-                // 拼接小于操作，如score < 90
-                sb.append(key).append(" < ").append(compareValue);
-              case "$gte" ->
-                // 拼接大于等于操作，如views >= 1000
-                sb.append(key).append(" >= ").append(compareValue);
-              default -> {
-              }
-            }
-            // 拼接逻辑与操作符，因为同一个列名可能有多个比较条件，如score > 70 and score < 90
-            sb.append(" and ");
-          }
-          // 删除最后一个多余的逻辑与操作符和空格
-          sb.delete(sb.length() - 5, sb.length());
-        }
-      }
+      sb.append(operationContextService.getOperation(key).doOperation(key, value));
       // 拼接逻辑与操作符，因为不同的列名可能有不同的比较条件，如(score > 70 and score < 90 ) and views >= 1000
       sb.append(" and ");
     }
@@ -152,6 +87,7 @@ public class LogicalOperatorServiceImpl implements OperationService {
 
   @Override
   public String type() {
+    String logical = "$and,$or,$not";
     return CommonConstants.LOGICAL;
   }
 }

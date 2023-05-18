@@ -1,5 +1,6 @@
 package com.mesh.web.service.impl;
 
+import com.mesh.web.service.OperationContextService;
 import com.mesh.web.service.ParseStrategyService;
 import com.mesh.web.service.StrategyContextService;
 import io.vertx.core.json.JsonArray;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class SwitchParseServiceImpl implements ParseStrategyService {
 
   @Autowired
-  private StrategyContextService strategyContextService;
+  private OperationContextService operationContextService;
 
   @Override
   public String parse(Object value) {
@@ -36,14 +37,14 @@ public class SwitchParseServiceImpl implements ParseStrategyService {
               Object caseVal = obj.getValue("case");
               Object thenVal = obj.getValue("then");
               if (caseVal != null && thenVal != null) {
-                sb.append("when ").append(strategyContextService.parse((JsonObject) caseVal)).append(" then ").append(thenVal).append(" ");
+                sb.append("when ").append(operationContextService.parse((JsonObject) caseVal)).append(" then '").append(thenVal).append("' ");
               }
             }
           }
         }
       } else if (key.equals("default")) {
         // 如果键是default，表示有默认值，根据值的类型进行处理
-        sb.append("else ").append(val).append(" ");
+        sb.append("else '").append(val).append("' ");
       }
     }
     sb.append("end");

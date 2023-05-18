@@ -42,7 +42,7 @@ public class ProjectParseServiceImpl implements ParseStrategyService {
           for (String k : obj.fieldNames()) {
             Object v = obj.getValue(k);
             if (OperatorUtil.isAggregateOperator(k)) {
-              sb.append(operationContextService.getOperation(CommonConstants.FUNCTION).doOperation(k, v))
+              sb.append(operationContextService.getOperation(k).doOperation(k, v))
                 .append(" as ").append(key).append(", ");
             } else if (k.equals("$switch")) {
               sb.append(strategyContextService.getStrategy("$switch").parse((JsonObject) v))
@@ -53,7 +53,7 @@ public class ProjectParseServiceImpl implements ParseStrategyService {
           if (val instanceof String str) {
             // 如果值是一个字符串，表示有别名操作符，如$as, $alias等，用as关键字表示，并给结果起别名为值
             if (OperatorUtil.isAliasOperator(str)) {
-              sb.append(operationContextService.getOperation(CommonConstants.ALIAS).doOperation(str, key)).append(", ");
+              sb.append(operationContextService.getOperation(str).doOperation(str, key)).append(", ");
             }
           }
       }
@@ -67,6 +67,6 @@ public class ProjectParseServiceImpl implements ParseStrategyService {
 
   @Override
   public String type() {
-    return "$from";
+    return "$project";
   }
 }

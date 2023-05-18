@@ -1,0 +1,274 @@
+### Send POST request with json body
+POST http://localhost:8443/generate/sql
+Content-Type: application/json
+
+{
+  "$project": {
+    "column1": 1,
+    "column2": 1,
+    "count": {
+      "$count": "column1"
+    }
+  },
+  "$from": {
+    "$project": {
+      "column1": 1,
+      "column2": 1,
+      "sum": {
+        "$sum": [
+          "column3",
+          "column4"
+        ]
+      },
+      "summary": {
+        "$switch": {
+          "branches": [
+            {
+              "case": {
+                "$eq": [
+                  "scores",
+                  90
+                ]
+              },
+              "then": "100 !"
+            },
+            {
+              "case": {
+                "$gte": [
+                  {
+                    "$avg": "scores"
+                  },
+                  90
+                ]
+              },
+              "then": "Doing great!"
+            },
+            {
+              "case": {
+                "$and": [
+                  {
+                    "$gte": [
+                      {
+                        "$avg": "scores"
+                      },
+                      80
+                    ]
+                  },
+                  {
+                    "$lt": [
+                      {
+                        "$avg": "scores"
+                      },
+                      90
+                    ]
+                  }
+                ]
+              },
+              "then": "Doing pretty well."
+            }
+          ],
+          "default": "No scores found."
+        }
+      }
+    },
+    "$from": [
+      "table1"
+    ],
+    "$lookup": [
+      {
+        "from": "table2",
+        "type": "left",
+        "localField": "table1.id",
+        "foreignField": "table2.id"
+      }
+    ],
+    "$match": {
+      "column1" : "funCode1",
+      "$or": [
+        {
+          "score": {
+            "$gt": 70,
+            "$lt": 90
+          }
+        },
+        {
+          "views": {
+            "$gte": 1000
+          }
+        }
+      ]
+    }
+  },
+  "$group": {
+    "_id": [
+      "column1",
+      "column2"
+    ],
+    "ct": {
+      "$count": {}
+    }
+  },
+  "$sort": {
+    "column1": 1,
+    "column2": -1
+  },
+  "$limit": 100,
+  "$skip": 100
+}
+
+
+### Send POST request with json body
+POST http://localhost:8443/generate/sql
+Content-Type: application/json
+
+{
+  "$project": {
+    "column1": 1,
+    "column2": 1,
+    "sum": {
+      "$sum": [
+        "column3",
+        "column4"
+      ]
+    },
+    "summary": {
+      "$switch": {
+        "branches": [
+          {
+            "case": {
+              "$eq": [
+                "scores",
+                90
+              ]
+            },
+            "then": "100 !"
+          },
+          {
+            "case": {
+              "$gte": [
+                {
+                  "$avg": "scores"
+                },
+                90
+              ]
+            },
+            "then": "Doing great!"
+          },
+          {
+            "case": {
+              "$and": [
+                {
+                  "$gte": [
+                    {
+                      "$avg": "scores"
+                    },
+                    80
+                  ]
+                },
+                {
+                  "$lt": [
+                    {
+                      "$avg": "scores"
+                    },
+                    90
+                  ]
+                }
+              ]
+            },
+            "then": "Doing pretty well."
+          }
+        ],
+        "default": "No scores found."
+      }
+    }
+  },
+  "$from": [
+    "table1"
+  ],
+  "$lookup": [
+    {
+      "from": "table2",
+      "type": "left",
+      "localField": "table1.id",
+      "foreignField": "table2.id"
+    }
+  ],
+  "$match": {
+    "column1": "funCode1",
+    "$or": [
+      {
+        "score": {
+          "$gt": 70,
+          "$lt": 90
+        }
+      },
+      {
+        "views": {
+          "$gte": 1000
+        }
+      }
+    ]
+  },
+  "$group": {
+    "_id": [
+      "column1",
+      "column2"
+    ],
+    "ct": {
+      "$count": {}
+    }
+  },
+  "$sort": {
+    "column1": 1,
+    "column2": -1
+  },
+  "$limit": 100,
+  "$skip": 100
+}
+
+
+### Send POST request with json body
+POST http://localhost:8443/generate/sql
+Content-Type: application/json
+
+{
+  "$from": [
+    "table1"
+  ],
+  "$project": {
+    "column1": 1,
+    "column2": 1,
+    "sum": {
+      "$sum": [
+        "column3",
+        "column4"
+      ]
+    }
+  },
+  "$lookup": [
+    {
+      "from": "table2",
+      "type": "left",
+      "localField": "table1.id",
+      "foreignField": "table2.id"
+    }
+  ],
+  "$match": {
+    "column1": "funCode1",
+    "$or": [
+      {
+        "score": {
+          "$gt": 70,
+          "$lt": 90
+        }
+      },
+      {
+        "views": {
+          "$gte": 1000
+        }
+      }
+    ]
+  },
+  "$limit": 100,
+  "$skip": 100
+}
