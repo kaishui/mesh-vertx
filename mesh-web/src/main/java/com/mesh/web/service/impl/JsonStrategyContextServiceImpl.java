@@ -24,6 +24,8 @@ public class JsonStrategyContextServiceImpl implements StrategyContextService {
   @Autowired
   @Lazy
   private EmptyParseServiceImpl emptyParseService;
+
+
   @Override
   public String parse(JsonObject json) {
     // 如果json对象为空，返回空字符串

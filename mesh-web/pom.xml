@@ -19,6 +19,11 @@
     <groupId>com.mesh</groupId>
     <artifactId>web-core</artifactId>
   </dependency>
+  <dependency>
+    <groupId>net.bytebuddy</groupId>
+    <artifactId>byte-buddy</artifactId>
+  </dependency>
+
 </dependencies>
   <build>
     <plugins>

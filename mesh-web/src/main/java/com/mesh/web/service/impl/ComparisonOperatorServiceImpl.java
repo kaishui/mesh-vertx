@@ -18,7 +18,7 @@ public class ComparisonOperatorServiceImpl implements OperationService {
 
   @Override
   public String doOperation(String key, Object value) {
-
+    log.info("doOperation key: {}, value: {}", key, value);
     if (value instanceof JsonArray array) {
       StringBuilder sb = new StringBuilder();
       for (int i = 0; i < array.size(); i++) {

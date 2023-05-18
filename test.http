@@ -236,6 +236,7 @@ Content-Type: application/json
     "table1"
   ],
   "$project": {
+    "total": { "$divide": [ { "$multiply": [{ "$subtract": [ { "$add": [ "price", "fee" ] }, "discount" ] }, "column1" ] }, "column2"] },
     "column1": 1,
     "column2": 1,
     "sum": {

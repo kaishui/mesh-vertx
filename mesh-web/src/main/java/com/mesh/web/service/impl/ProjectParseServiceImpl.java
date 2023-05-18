@@ -41,21 +41,17 @@ public class ProjectParseServiceImpl implements ParseStrategyService {
           // 如果值是一个对象，表示有聚合操作符，如$sum, $avg, $count等，用相应的sql函数表示，并给结果起别名为键名
           for (String k : obj.fieldNames()) {
             Object v = obj.getValue(k);
-            if (OperatorUtil.isAggregateOperator(k)) {
+            if (OperatorUtil.isAggregateOperator(k) || OperatorUtil.isArithmeticOperator(k)) {
               sb.append(operationContextService.getOperation(k).doOperation(k, v))
                 .append(" as ").append(key).append(", ");
             } else if (k.equals("$switch")) {
               sb.append(strategyContextService.getStrategy("$switch").parse((JsonObject) v))
                 .append(" as ").append(key).append(", ");
+            } else if (OperatorUtil.isAliasOperator(k)) {
+              sb.append(operationContextService.getOperation(k).doOperation(k, v)).append(key).append(", ");
             }
           }
-        } else // 如果值是其他类型，忽略该键值对
-          if (val instanceof String str) {
-            // 如果值是一个字符串，表示有别名操作符，如$as, $alias等，用as关键字表示，并给结果起别名为值
-            if (OperatorUtil.isAliasOperator(str)) {
-              sb.append(operationContextService.getOperation(str).doOperation(str, key)).append(", ");
-            }
-          }
+        }
       }
       // 去掉最后多余的逗号
       sb.setLength(sb.length() - 2);

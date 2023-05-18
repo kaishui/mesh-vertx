@@ -1,13 +1,9 @@
 package com.mesh.web.util;
 
-import io.vertx.core.json.Json;
+import com.mesh.web.constant.CommonConstants;
 import io.vertx.core.json.JsonObject;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Arrays;
-import java.util.Set;
 
 @Slf4j
 @UtilityClass
@@ -25,8 +21,8 @@ public class OperatorUtil {
     return key.equals("$gt") || key.equals("$lt") || key.equals("$eq") || key.equals("$gte") || key.equals("$lte") || key.equals("$ne");
   }
 
-  public boolean isNegationOperator(String key) {
-    return key.equals("$nin") || key.equals("$notIn");
+  public boolean isInNotInOperator(String key) {
+    return CommonConstants.IN_NOT_IN_OPERATOR.contains(key + ",");
   }
 
   // 判断是否是聚合操作符
@@ -34,6 +30,14 @@ public class OperatorUtil {
     return key.equals("$sum") || key.equals("$avg") || key.equals("$count") || key.equals("$min") || key.equals("$max");
   }
 
+  /**
+   * 四则运算
+   * @param key
+   * @return
+   */
+  public boolean isArithmeticOperator(String key) {
+    return CommonConstants.ARITHMETIC_OPERATOR.contains(key + ",");
+  }
 
   // 判断是否是别名操作符
   public boolean isAliasOperator(String key) {

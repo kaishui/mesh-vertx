@@ -32,11 +32,13 @@ public class FunctionOperatorServiceImpl implements OperationService {
       return sb.toString();
     }
     // 如果值是其他类型，返回空字符串
-    return "";  }
+    return "";
+  }
 
 
   /**
    * parameter operation mapping to sql element
+   *
    * @param key eg: @vag
    * @return sql func eg: return avg
    */

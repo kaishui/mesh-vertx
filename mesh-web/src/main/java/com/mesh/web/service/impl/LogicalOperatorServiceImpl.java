@@ -65,7 +65,7 @@ public class LogicalOperatorServiceImpl implements OperationService {
 
 
   // 定义一个辅助方法，用于解析json对象表示的条件，并转化为sql语句中的条件
-  private String parseCondition(JsonObject condition) {
+  public String parseCondition(JsonObject condition) {
     // 初始化一个字符串缓冲区，用于拼接条件语句
     StringBuilder sb = new StringBuilder();
     // 遍历条件对象的键集合
@@ -87,7 +87,6 @@ public class LogicalOperatorServiceImpl implements OperationService {
 
   @Override
   public String type() {
-    String logical = "$and,$or,$not";
     return CommonConstants.LOGICAL;
   }
 }

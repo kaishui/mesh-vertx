@@ -1,6 +1,5 @@
 package com.mesh.web.service.impl;
 
-import com.mesh.web.constant.CommonConstants;
 import com.mesh.web.service.OperationContextService;
 import com.mesh.web.service.ParseStrategyService;
 import com.mesh.web.service.StrategyContextService;
@@ -12,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * support $from element
+ * support match element
  */
 @Service
 @Slf4j
@@ -33,7 +32,7 @@ public class MatchParseServiceImpl implements ParseStrategyService {
       for (String key : object.fieldNames()) {
         Object val = object.getValue(key);
         // 如果键是一个逻辑操作符，如$or, $and, $not等，用相应的sql关键字表示，并用括号包围
-        if (OperatorUtil.isLogicalOperator(key)) {
+        if (OperatorUtil.isLogicalOperator(key) || OperatorUtil.isInNotInOperator(key)) {
           sb.append(operationContextService.getOperation(key).doOperation(key, val));
         } else {
           // 如果键是一个字段名，根据值的类型进行处理
@@ -41,15 +40,13 @@ public class MatchParseServiceImpl implements ParseStrategyService {
             // 如果值是一个对象，表示有比较操作符，如$gt, $lt, $eq等，用相应的sql符号表示
             for (String k : obj.fieldNames()) {
               Object v = obj.getValue(k);
-              if (OperatorUtil.isComparisonOperator(k)) {
-                sb.append(key).append(operationContextService.getOperation(key).doOperation(k, v));
-              }
+              sb.append(key).append(operationContextService.getOperation(k).doOperation(k, v));
             }
           } else if (val instanceof JsonArray array) {
             // 如果值是一个数组，表示有in或者not in操作符，用相应的sql关键字表示，并用括号包围
             if (array.size() > 0) {
               Object elem = array.getValue(0);
-              if (elem instanceof String && OperatorUtil.isNegationOperator((String) elem)) {
+              if (elem instanceof String && OperatorUtil.isInNotInOperator((String) elem)) {
                 sb.append(key).append(" not in ").append(parseArray((JsonArray) array.copy().remove(0)));
               } else {
                 sb.append(key).append(" in ").append(parseArray(array));

@@ -14,10 +14,10 @@ public class AliasOperatorServiceImpl implements OperationService {
     return switch (key) {
       case "$as" ->
         // 如果是$as操作符，用as关键字表示，并返回字段名和别名
-        value + " as " + key;
+        value + " as ";
       case "$alias" ->
         // 如果是$alias操作符，用as关键字表示，并返回字段名和别名
-        value + " as " + key;
+        value + " as ";
       default ->
         // 如果是其他操作符，返回空字符串
         "";

@@ -20,6 +20,6 @@ public class EmptyParseServiceImpl implements ParseStrategyService {
 
   @Override
   public String type() {
-    return "default";
+    return "$default";
   }
 }
