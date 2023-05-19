@@ -46,6 +46,8 @@ public class SqlBuilderController implements RouterInterface {
     String sql = strategyContextService.parse(jsonObject);
     log.info("sql: {}", sql);
 
+    // todo: call bigquery to validate the sql
+
     routingContext.response().setStatusCode(200).end(sql);
   }
 }

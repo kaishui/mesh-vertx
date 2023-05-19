@@ -17,6 +17,7 @@ public class DefaultOperationService implements OperationService {
   @Override
   public String doOperation(String key, Object value) {
     log.info("call default operation key: {}, value: {}", key, value);
+    // 没有命中关键字的操作符
     if (value instanceof JsonObject json) {
       StringBuilder sb = new StringBuilder();
       for (String k : json.fieldNames()) {

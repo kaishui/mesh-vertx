@@ -1,12 +1,33 @@
 {
-  "$project": {
-    "column1": 1,
-    "column2": 1
-  },
-  "$from": [
-    "table1"
+  "branches": [
+    {
+      "case": {
+        "$eq": [
+          "scores",
+          100
+        ]
+      },
+      "then": "100 !"
+    },
+    {
+      "case": {
+        "$and": [
+          {
+            "$gte": [
+              "scores",
+              80
+            ]
+          },
+          {
+            "$lt": [
+              "scores",
+              90
+            ]
+          }
+        ]
+      },
+      "then": "Doing pretty well."
+    }
   ],
-  "$match": {
-    "column1" : "funCode1"
-  }
+  "default": "No scores found."
 }

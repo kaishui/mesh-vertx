@@ -37,7 +37,10 @@ public class SwitchParseServiceImpl implements ParseStrategyService {
               Object caseVal = obj.getValue("case");
               Object thenVal = obj.getValue("then");
               if (caseVal != null && thenVal != null) {
-                sb.append("when ").append(operationContextService.parse((JsonObject) caseVal)).append(" then '").append(thenVal).append("' ");
+                if(thenVal instanceof String) {
+                  thenVal = "'" + thenVal + "'";
+                }
+                sb.append("when ").append(operationContextService.parse((JsonObject) caseVal)).append(" then ").append(thenVal).append(" ");
               }
             }
           }
