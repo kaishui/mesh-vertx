@@ -2,7 +2,6 @@ package com.mesh.web.service.impl;
 
 import com.mesh.web.constant.CommonConstants;
 import com.mesh.web.service.OperationService;
-import io.vertx.core.json.JsonArray;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

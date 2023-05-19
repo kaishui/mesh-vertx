@@ -1,14 +1,11 @@
 package com.mesh.web.service.impl;
 
 import com.mesh.web.service.BaseTest;
-import com.mesh.web.service.OperationContextService;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DefaultOperationServiceTest extends BaseTest {
 

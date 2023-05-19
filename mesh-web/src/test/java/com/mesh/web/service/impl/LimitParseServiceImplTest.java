@@ -4,7 +4,7 @@ import com.mesh.web.service.BaseTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LimitParseServiceImplTest extends BaseTest {
 

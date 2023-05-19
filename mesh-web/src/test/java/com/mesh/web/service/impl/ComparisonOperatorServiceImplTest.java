@@ -2,13 +2,12 @@ package com.mesh.web.service.impl;
 
 import com.mesh.web.service.BaseTest;
 import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ComparisonOperatorServiceImplTest extends BaseTest {
 

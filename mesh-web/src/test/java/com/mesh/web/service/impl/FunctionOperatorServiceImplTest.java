@@ -6,7 +6,7 @@ import io.vertx.core.json.JsonArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FunctionOperatorServiceImplTest extends BaseTest {
   @Autowired

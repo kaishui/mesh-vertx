@@ -1,6 +1,5 @@
 package com.mesh.web.service.impl;
 
-import com.mesh.web.constant.CommonConstants;
 import com.mesh.web.service.OperationContextService;
 import com.mesh.web.service.ParseStrategyService;
 import com.mesh.web.service.StrategyContextService;

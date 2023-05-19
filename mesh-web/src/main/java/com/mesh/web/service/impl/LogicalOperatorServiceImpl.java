@@ -58,6 +58,8 @@ public class LogicalOperatorServiceImpl implements OperationService {
       }
       sb.append(")");
       return sb.toString();
+    } else {
+      //todo: throws format error
     }
     // 如果值是其他类型，返回空字符串
     return "";
