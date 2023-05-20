@@ -4,6 +4,7 @@ import com.hazelcast.config.Config;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.spi.VerticleFactory;
 import io.vertx.spi.cluster.hazelcast.ConfigUtil;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
@@ -19,9 +20,13 @@ import org.springframework.context.support.AbstractApplicationContext;
 public class VertxSpringApplication {
 
   public static Vertx vertx;
+  public static final int VERTICLE_COUNT = 20; // number of verticles, better two size of cpu
+
 
   public static void main(String[] args) {
     System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory");
+    System.setProperty("hazelcast.logging.type", "log4j2");
+    System.setProperty("com.hazelcast.level", "DEBUG");
 
     Config config = ConfigUtil.loadConfig();
     config.setClusterName("mesh");
@@ -46,10 +51,11 @@ public class VertxSpringApplication {
         vertx.registerVerticleFactory(verticleFactory);
 
         DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(1);
-        vertx.deployVerticle(verticleFactory.prefix() + ":" + MainVerticle.class.getName(), deploymentOptions);
+        for (int i = 0; i < VERTICLE_COUNT; i++) {
+          vertx.deployVerticle(verticleFactory.prefix() + ":" + MainVerticle.class.getName(), deploymentOptions);
+        }
       }
     });
-
   }
 
 

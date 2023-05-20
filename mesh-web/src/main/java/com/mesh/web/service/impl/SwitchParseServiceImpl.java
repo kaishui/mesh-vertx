@@ -26,7 +26,7 @@ public class SwitchParseServiceImpl implements ParseStrategyService {
     // 遍历对象中的每个键值对
     for (String key : object.fieldNames()) {
       Object val = object.getValue(key);
-      if (key.equals("branches")) {        // 如果键是branches，表示有多个分支条件，根据值的类型进行处理
+      if (key != null && key.equals("branches")) {
         if (val instanceof JsonArray array) {
           // 遍历数组中的每个元素
           for (int i = 0; i < array.size(); i++) {
@@ -44,9 +44,11 @@ public class SwitchParseServiceImpl implements ParseStrategyService {
             }
           }
         }
-      } else if (key.equals("default")) {
-        // 如果键是default，表示有默认值，根据值的类型进行处理
-        sb.append("else '").append(val).append("' ");
+      } else if (key != null && key.equals("default")) {
+        if(val instanceof String) {
+          val = "'" + val + "' ";
+        }
+        sb.append("else ").append(val);
       }
     }
     sb.append("end");

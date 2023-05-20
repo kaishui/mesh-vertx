@@ -12,10 +12,14 @@ public class RouterExceptionHandler {
     log.error("RouterExceptionHandler", routingContext.failure());
 
     Throwable failure = routingContext.failure();
-    //TODO: instanceof check
-
-    routingContext.response().setStatusCode(500)
-      .end("server internal error " + failure.getMessage() );
-
+    //Check if the failure is an instance of an exception class
+    if (failure instanceof Exception) {
+        routingContext.response().setStatusCode(500)
+            .end("server internal error " + failure.getMessage());
+    }
+    //If the failure is not an instance of an exception class, then log the error
+    else {
+        log.error("Unexpected error occured", routingContext.failure());
+    }
   }
 }

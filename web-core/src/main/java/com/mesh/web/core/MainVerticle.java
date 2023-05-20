@@ -46,11 +46,12 @@ public class MainVerticle extends AbstractVerticle {
     configurations.getConfig().onSuccess(config -> {
       int port = config.getJsonObject("server").getInteger("port");
 
+//      int port = config.getInteger("http.port");
       log.info("server port: {}", port);
       server.requestHandler(router).listen(port, http -> {
         if (http.succeeded()) {
           startPromise.complete();
-          System.out.println("HTTP server started on port " + port);
+          log.info("HTTP server started on port " + port);
         } else {
           startPromise.fail(http.cause());
         }

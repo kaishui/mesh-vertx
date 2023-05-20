@@ -4,6 +4,7 @@ import com.mesh.web.service.OperationContextService;
 import com.mesh.web.service.ParseStrategyService;
 import com.mesh.web.service.StrategyContextService;
 import com.mesh.web.util.OperatorUtil;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,11 @@ public class ProjectParseServiceImpl implements ParseStrategyService {
 
   @Override
   public String parse(Object value) {
+    // Add check for value being an array
+    if (value instanceof JsonArray) {
+      return "";
+    }
+
     // 如果值是一个对象，解析对象中的属性，并返回select子句
     if (value instanceof JsonObject object) {
       StringBuilder sb = new StringBuilder();

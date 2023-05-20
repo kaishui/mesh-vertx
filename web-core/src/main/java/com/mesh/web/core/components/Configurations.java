@@ -17,8 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class Configurations {
-
-
+  //Adding a private static final variable for ConfigRetriever
   private static ConfigRetriever configRetriever;
 
   @PostConstruct
@@ -35,6 +34,7 @@ public class Configurations {
     ConfigRetrieverOptions options = new ConfigRetrieverOptions().addStore(propertiesProperties).addStore(yamlProperties)
       .addStore(systemProperties).addStore(envProperties);
 
+    //Assigning the initialized ConfigRetriever to the static final variable
     configRetriever = ConfigRetriever.create(VertxSpringApplication.vertx, options);
   }
 

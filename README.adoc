@@ -29,4 +29,5 @@ To run your application:
 * https://discord.gg/6ry7aqPWXy[Vert.x Discord]
 * https://gitter.im/eclipse-vertx/vertx-users[Vert.x Gitter]
 
+== Performance test
 

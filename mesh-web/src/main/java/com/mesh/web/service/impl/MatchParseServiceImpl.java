@@ -80,6 +80,9 @@ public class MatchParseServiceImpl implements ParseStrategyService {
       } else if (elem instanceof JsonArray) {
         sb.append(parseArray((JsonArray) elem));
       } else {
+        if (elem instanceof String) {
+          elem = "'" + elem + "'";
+        }
         sb.append(elem);
       }
       if (i < array.size() - 1) {
