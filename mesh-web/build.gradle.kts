@@ -5,7 +5,7 @@
  */
 
 plugins {
-    id("com.mesh.java-conventions")
+//    id("com.mesh.java-conventions")
 }
 
 dependencies {
