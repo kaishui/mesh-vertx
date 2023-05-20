@@ -27,13 +27,21 @@ public class SqlBuilderController implements RouterInterface {
 
     JsonObject jsonObject = routingContext.body().asJsonObject();
 
-    //TODO: Validate json structure and sorting strategy - $project $from $match $group
+    //TODO: Use event bus to replace this
 
-    String sql = strategyContextService.parse(jsonObject);
-    log.info("sql: {}", sql);
-//    TODO: call jdbc query
-
-    routingContext.response().setStatusCode(200).end(sql);
+    // Validate json structure and sorting strategy - $project $from $match $group
+//    boolean isValidJson = validateJson(jsonObject);
+    boolean isValidJson = true;
+    if (isValidJson) {
+      // Use event bus to replace this
+      String sql = strategyContextService.parse(jsonObject);
+      log.info("sql: {}", sql);
+      // call jdbc query
+//      callJdbcQuery(sql);
+      routingContext.response().setStatusCode(200).end(sql);
+    } else {
+      routingContext.response().setStatusCode(400).end("Invalid json structure");
+    }
   }
 
   private void generateSql(RoutingContext routingContext) {
@@ -41,13 +49,23 @@ public class SqlBuilderController implements RouterInterface {
 
     JsonObject jsonObject = routingContext.body().asJsonObject();
 
-    //TODO: Validate json structure and sorting strategy - $project $from $match $group
+    // Validate json structure and sorting strategy - $project $from $match $group
+//    boolean isValidJson = validateJson(jsonObject);
+    boolean isValidJson = true;
 
-    String sql = strategyContextService.parse(jsonObject);
-    log.info("sql: {}", sql);
-
-    // todo: call bigquery to validate the sql
-
-    routingContext.response().setStatusCode(200).end(sql);
+    if (isValidJson) {
+      String sql = strategyContextService.parse(jsonObject);
+      log.info("sql: {}", sql);
+      // call bigquery to validate the sql
+//      boolean isValidSql = callBigqueryValidate(sql);
+      boolean isValidSql = true;
+      if (isValidSql) {
+        routingContext.response().setStatusCode(200).end(sql);
+      } else {
+        routingContext.response().setStatusCode(400).end("Invalid sql");
+      }
+    } else {
+      routingContext.response().setStatusCode(400).end("Invalid json structure");
+    }
   }
 }
