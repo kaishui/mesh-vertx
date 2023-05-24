@@ -31,3 +31,85 @@ To run your application:
 
 == Performance test
 
+== todo
+
+```
+用java 语言 vertx 用实现bigquery result json：
+{
+  "schema": {
+  	 "fields":[
+  	 	{
+  	 		"name": "column1",
+  	 		"type": "STRING",
+  	 		"mode": "NULLABLE"
+  	 	},
+  	 	{
+  	 		"name": "column2",
+  	 		"type": "STRING",
+  	 		"mode": "NULLABLE"
+  	 	},
+  	 	{
+  	 		"name": "column3",
+  	 		"type": "DATE",
+  	 		"mode": "NULLABLE"
+  	 	},
+  	 	{
+  	 		"name": "price",
+  	 		"type": "NUMERIC",
+  	 		"mode": "NULLABLE"
+  	 	}
+  	 ]
+  },
+  "jobReference": {
+    object (JobReference)
+  },
+  "totalRows": 3,
+  "rows": [
+    {
+      "f": [
+      	{"v": "value1"},
+      	{"v": "value2"},
+      	{"v": "2023-01-01"},
+      	{"v": "1.3712"}
+      ]
+    },
+    {
+      "f": [
+      	{"v": "value3"},
+      	{"v": "value4"},
+      	{"v": "2023-01-21"},
+      	{"v": "1.3812"}
+      ]
+    }
+  ]
+}
+提取rows json 按照schema 变换成以下json:
+
+[
+	{
+		"column1": "value1",
+      	"column2": "value2",
+      	"column3": "2023-01-01",
+      	"price": "1.3712"
+	},
+	{
+		"column1": "value3",
+      	"column2": "value4",
+      	"column3": "2023-01-21",
+      	"price": "1.3812"
+	}
+]
+
+
+with fs as (select parse_json('{"coloum1": :[{"name": "value"}, {"name": "value2"}]}) as t ),
+	 fc as (select * from table1 where 1 =1)
+
+json_value("column1") as c1, unnest(json_query_array(colomn1)) as column2
+
+with: [
+
+	{$project},
+	{}
+]
+```
+
