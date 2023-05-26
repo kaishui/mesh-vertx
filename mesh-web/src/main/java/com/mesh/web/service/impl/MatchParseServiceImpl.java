@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 /**
  * support match element
  */
@@ -38,9 +40,15 @@ public class MatchParseServiceImpl implements ParseStrategyService {
           // 如果键是一个字段名，根据值的类型进行处理
           if (val instanceof JsonObject obj) {
             // 如果值是一个对象，表示有比较操作符，如$gt, $lt, $eq等，用相应的sql符号表示
-            for (String k : obj.fieldNames()) {
+            Set<String> keys = obj.fieldNames();
+            String[] arr = keys.toArray(new String[0]);
+            for (int i = 0; i < keys.size(); i++) {
+              String k = arr[i];
               Object v = obj.getValue(k);
               sb.append(key).append(operationContextService.getOperation(k).doOperation(k, v));
+              if (i < keys.size() - 1) {
+                sb.append(" and ");
+              }
             }
           } else if (val instanceof JsonArray array) {
             // 如果值是一个数组，表示有in或者not in操作符，用相应的sql关键字表示，并用括号包围

@@ -91,7 +91,8 @@ public class CovertUtil {
             keyPair.put(name, (String) v);
             break;
           case "DATE":
-            keyPair.put(name, Date.parse((String) v));
+//            keyPair.put(name, Date.parse((String) v));
+            keyPair.put(name, (String) v);
             break;
           case "NUMERIC":
             keyPair.put(name, new BigDecimal((String) v));

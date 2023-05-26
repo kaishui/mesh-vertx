@@ -48,6 +48,28 @@ class MatchParseServiceImplTest extends BaseTest {
     assertEquals(matchParseService.parse(inputObj3), "where name = John and score > 70");
   }
 
+  @Test
+  public void parseLikeJson() {
+    String jsonStr = """
+      {"column1": {"$like": "%cn%", "$notLike": "%ch%"}, "column2": {"$like": "%sdf%"}}
+
+      """;
+    JsonObject inputObj = new JsonObject(jsonStr);
+    assertEquals("where column1 like '%cn%' and column1 not like '%ch%' and column2 like '%sdf%'", matchParseService.parse(inputObj));
+
+  }
+
+  @Test
+  public void parseLtJson() {
+    String jsonStr = """
+      {"column1": {"$gt": "2023-01-01", "$lte": "2023-01-31"}, "column2": {"$gt": "2023-01-01"}}
+
+      """;
+    JsonObject inputObj = new JsonObject(jsonStr);
+    assertEquals("where column1 > 2023-01-01 and column1 <= 2023-01-31 and column2 > 2023-01-01", matchParseService.parse(inputObj));
+
+  }
+
 
   @Test
   public void testType() {
