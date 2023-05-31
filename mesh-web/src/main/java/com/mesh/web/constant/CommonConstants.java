@@ -12,4 +12,5 @@ public class CommonConstants {
   public static final String ARITHMETIC_OPERATOR = "$add,$subtract,$sub,$multiply,$mul,$divide,$div,";
   public static final String IN_NOT_IN_OPERATOR = "$in,$nin,$notIn,";
   public static final String LIKE_NOT_LIKE = "$like,$notLike,";
+  public static final String BETWEEN_NOT_BETWEEN = "$between,$notBetween,";
 }
