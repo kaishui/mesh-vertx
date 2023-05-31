@@ -92,4 +92,16 @@ class ProjectParseServiceImplTest extends BaseTest {
     JsonObject jsonObject = new JsonObject(jsonstr);
     assertEquals("select distinct column0, column2", projectParseService.parse(jsonObject));
   }
+
+  @Test
+  public void testAsSimple() {
+    String jsonstr = """
+      {
+          "column0": "t.name",
+          "column2": 1
+        }
+        """;
+    JsonObject jsonObject = new JsonObject(jsonstr);
+    assertEquals("select 't.name' as column0, column2", projectParseService.parse(jsonObject));
+  }
 }

@@ -4,6 +4,7 @@ Content-Type: application/json
 
 {
   "$project": {
+    "column0": {"$distinct": {}},
     "column1": 1,
     "column2": 1,
     "count": {
@@ -12,6 +13,7 @@ Content-Type: application/json
   },
   "$from": {
     "$project": {
+      "column0": {"$distinct": {}},
       "column1": 1,
       "column2": 1,
       "sum": {
@@ -96,17 +98,16 @@ Content-Type: application/json
             "$gte": 1000
           }
         }
-      ]
+      ],
+      "$tuple": [{"column1": "2013-01-01", "column2": "2013-12-01", "column3": "123"}, {"column1": "2013-01-03", "column2": "2013-12-03", "column3": "1233"}],
+      "columnDate": {"$between": {"from": {"$parseDate": {"date": "2023-01-01", "format":  "%Y%m%d"}}, "to": {"$parseDate": {"date": "2023-12-01", "format":  "%Y%m%d"}}}}
     }
   },
   "$group": {
     "_id": [
       "column1",
       "column2"
-    ],
-    "ct": {
-      "$count": {}
-    }
+    ]
   },
   "$sort": {
     "column1": 1,

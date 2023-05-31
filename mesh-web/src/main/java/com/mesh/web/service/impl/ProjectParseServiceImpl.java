@@ -46,6 +46,9 @@ public class ProjectParseServiceImpl implements ParseStrategyService {
         } else if (val instanceof JsonObject obj) {
           // 如果值是一个对象，表示有聚合操作符，如$sum, $avg, $count等，用相应的sql函数表示，并给结果起别名为键名
           handleJsonObject(sb, key, obj);
+        } else if (val instanceof String) {
+          // 如果值是一个字符串，表示有别名操作符，并给结果起别名为键名
+          sb.append(OperatorUtil.toStr(val)).append(" as ").append(key).append(", ");
         }
       }
       // 去掉最后多余的逗号
