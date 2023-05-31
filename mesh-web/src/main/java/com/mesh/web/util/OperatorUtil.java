@@ -98,4 +98,13 @@ public class OperatorUtil {
   public boolean isDistinctOperator(String k) {
     return CommonConstants.DISTINCT.contains(k + ",");
   }
+
+  /**
+   * 判断是否是tuple操作符
+   * @param key
+   * @return
+   */
+  public static boolean isTupleOperator(String key) {
+    return CommonConstants.TUPLE.contains(key + ",");
+  }
 }
