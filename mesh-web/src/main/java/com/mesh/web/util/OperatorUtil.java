@@ -4,6 +4,7 @@ import com.mesh.web.constant.CommonConstants;
 import io.vertx.core.json.JsonObject;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 @UtilityClass
@@ -39,6 +40,15 @@ public class OperatorUtil {
     return CommonConstants.ARITHMETIC_OPERATOR.contains(key + ",");
   }
 
+  /**
+   *  判断是否是日期操作符
+   * @param key $FORMAT_DATE
+   * @return boolean
+   */
+  public boolean isDateFunctionOperator(String key) {
+    return CommonConstants.DATE_FUNCTION.contains(key + ",");
+  }
+
   // 判断是否是别名操作符
   public boolean isAliasOperator(String key) {
     return key.equals("$as") || key.equals("$alias");
@@ -64,5 +74,19 @@ public class OperatorUtil {
       }
     }
     return sortedJson;
+  }
+
+  /**
+   * convert to string
+   * @param value value
+   * @return string
+   */
+  public Object toStr(Object value) {
+    if (value instanceof String) {
+      if(StringUtils.isNoneEmpty((String) value)) {
+         value = "'" + value + "'";
+      }
+    }
+    return value;
   }
 }

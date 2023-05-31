@@ -62,4 +62,23 @@ class ProjectParseServiceImplTest extends BaseTest {
     assertEquals("select column1, column2, sum(column3, column4) as sum", projectParseService.parse(jsonObject));
   }
 
+  // test FORMAT_DATE
+  @Test
+  public void testFormatDate() {
+    String jsonstr = """
+      {
+          "column1": 1,
+          "column2": 1,
+          "column3": {
+            "$FORMAT_DATE": {
+              "date": "column4",
+              "format": "%Y%m%d"
+            }
+          }
+        }
+        """;
+    JsonObject jsonObject = new JsonObject(jsonstr);
+    assertEquals("select column1, column2, FORMAT_DATE('%Y%m%d', 'column4') as column3", projectParseService.parse(jsonObject));
+  }
+
 }

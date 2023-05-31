@@ -46,7 +46,8 @@ public class ProjectParseServiceImpl implements ParseStrategyService {
           // 如果值是一个对象，表示有聚合操作符，如$sum, $avg, $count等，用相应的sql函数表示，并给结果起别名为键名
           for (String k : obj.fieldNames()) {
             Object v = obj.getValue(k);
-            if (OperatorUtil.isAggregateOperator(k) || OperatorUtil.isArithmeticOperator(k)) {
+            if (OperatorUtil.isAggregateOperator(k) || OperatorUtil.isArithmeticOperator(k)
+              || OperatorUtil.isDateFunctionOperator(k)) {
               sb.append(operationContextService.getOperation(k).doOperation(k, v))
                 .append(" as ").append(key).append(", ");
             } else if (k.equals("$switch")) {

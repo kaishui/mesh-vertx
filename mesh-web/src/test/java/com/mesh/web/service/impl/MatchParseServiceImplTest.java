@@ -72,6 +72,30 @@ class MatchParseServiceImplTest extends BaseTest {
 
 
   @Test
+  public void parseBetweenJson() {
+    String jsonStr = """
+      {"column1": {"$between": {"from": "2013-01-01", "to": "2013-12-01"}}}
+
+      """;
+    JsonObject inputObj = new JsonObject(jsonStr);
+    assertEquals("where column1  between  '2013-01-01' and  '2013-12-01'", matchParseService.parse(inputObj));
+
+  }
+
+
+  @Test
+  public void parseBetweenParseDateJson() {
+    String jsonStr = """
+      {"column1": {"$between": {"from": {"$parseDate": { "date": "dateColumn", "format": "yyyy-MM-dd" }}, "to": {"$parseDate": { "date": "2023-01-01", "format": "yyyy-MM-dd" }}}}}
+
+      """;
+    JsonObject inputObj = new JsonObject(jsonStr);
+    assertEquals("where column1  between  PARSE_DATE('yyyy-MM-dd', 'dateColumn') and PARSE_DATE('yyyy-MM-dd', '2023-01-01')", matchParseService.parse(inputObj));
+
+  }
+
+
+  @Test
   public void testType() {
     assertEquals(matchParseService.type(), "$match");
   }

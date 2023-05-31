@@ -13,4 +13,5 @@ public class CommonConstants {
   public static final String IN_NOT_IN_OPERATOR = "$in,$nin,$notIn,";
   public static final String LIKE_NOT_LIKE = "$like,$notLike,";
   public static final String BETWEEN_NOT_BETWEEN = "$between,$notBetween,";
+  public static final String DATE_FUNCTION = "$FORMAT_DATE,$formatDate,$PARSE_DATE,$parseDate,";
 }
