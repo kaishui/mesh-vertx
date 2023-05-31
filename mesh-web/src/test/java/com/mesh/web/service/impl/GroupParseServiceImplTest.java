@@ -38,6 +38,37 @@ class GroupParseServiceImplTest extends BaseTest {
   }
 
   @Test
+  public void testHaving() {
+    JsonObject jsonObj = new JsonObject();
+    JsonArray jsonArray = new JsonArray().add("name").add("age");
+    jsonObj.put("_id", jsonArray);
+
+    String expectedExpression = """
+     {"$gt": [{"$sum": "age"}, 90]}
+     """;
+    jsonObj.put("having", new JsonObject(expectedExpression));
+
+    String expected = "group by name, age having sum(age)  >  90";
+
+    assertEquals(expected, groupParseService.parse(jsonObj));
+  }
+
+  @Test
+  public void testHavingOne() {
+    JsonObject jsonObj = new JsonObject();
+    JsonArray jsonArray = new JsonArray().add("name");
+    jsonObj.put("_id", jsonArray);
+
+    String expectedExpression = """
+     {"$gt": [{"$sum": "age"}, 90]}
+     """;
+    jsonObj.put("having", new JsonObject(expectedExpression));
+
+    String expected = "group by name having sum(age)  >  90";
+
+    assertEquals(expected, groupParseService.parse(jsonObj));
+  }
+  @Test
   public void testParseMethodForDifferentTypeValue() {
     Integer value = 123;
 

@@ -14,7 +14,7 @@ Content-Type: application/json
   "$from": {
     "$project": {
       "column0": {"$distinct": {}},
-      "column1": 1,
+      "column1": "t.name",
       "column2": 1,
       "sum": {
         "$sum": [
