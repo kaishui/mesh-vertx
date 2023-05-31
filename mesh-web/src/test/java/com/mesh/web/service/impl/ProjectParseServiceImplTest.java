@@ -81,4 +81,15 @@ class ProjectParseServiceImplTest extends BaseTest {
     assertEquals("select column1, column2, FORMAT_DATE('%Y%m%d', 'column4') as column3", projectParseService.parse(jsonObject));
   }
 
+  @Test
+  public void testProjectDistinct() {
+    String jsonstr = """
+      {
+          "column0": {"$distinct": {}},
+          "column2": 1
+        }
+        """;
+    JsonObject jsonObject = new JsonObject(jsonstr);
+    assertEquals("select distinct column0, column2", projectParseService.parse(jsonObject));
+  }
 }

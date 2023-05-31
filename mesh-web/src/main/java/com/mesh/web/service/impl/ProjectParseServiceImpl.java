@@ -7,6 +7,7 @@ import com.mesh.web.util.OperatorUtil;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,19 +45,7 @@ public class ProjectParseServiceImpl implements ParseStrategyService {
           }
         } else if (val instanceof JsonObject obj) {
           // 如果值是一个对象，表示有聚合操作符，如$sum, $avg, $count等，用相应的sql函数表示，并给结果起别名为键名
-          for (String k : obj.fieldNames()) {
-            Object v = obj.getValue(k);
-            if (OperatorUtil.isAggregateOperator(k) || OperatorUtil.isArithmeticOperator(k)
-              || OperatorUtil.isDateFunctionOperator(k)) {
-              sb.append(operationContextService.getOperation(k).doOperation(k, v))
-                .append(" as ").append(key).append(", ");
-            } else if (k.equals("$switch")) {
-              sb.append(strategyContextService.getStrategy("$switch").parse((JsonObject) v))
-                .append(" as ").append(key).append(", ");
-            } else if (OperatorUtil.isAliasOperator(k)) {
-              sb.append(operationContextService.getOperation(k).doOperation(k, v)).append(key).append(", ");
-            }
-          }
+          handleJsonObject(sb, key, obj);
         }
       }
       // 去掉最后多余的逗号
@@ -65,6 +54,30 @@ public class ProjectParseServiceImpl implements ParseStrategyService {
     }
     // 如果值是其他类型，返回空字符串
     return "";
+  }
+
+  /**
+   * for json object
+   * @param sb
+   * @param key
+   * @param obj
+   */
+  private void handleJsonObject(StringBuilder sb, String key, JsonObject obj) {
+    for (String k : obj.fieldNames()) {
+      Object v = obj.getValue(k);
+      if (OperatorUtil.isAggregateOperator(k) || OperatorUtil.isArithmeticOperator(k)
+        || OperatorUtil.isDateFunctionOperator(k)) {
+        sb.append(operationContextService.getOperation(k).doOperation(k, v))
+          .append(" as ").append(key).append(", ");
+      } else if (k.equals("$switch")) {
+        sb.append(strategyContextService.getStrategy("$switch").parse((JsonObject) v))
+          .append(" as ").append(key).append(", ");
+      } else if (OperatorUtil.isAliasOperator(k)) {
+        sb.append(operationContextService.getOperation(k).doOperation(k, v)).append(key).append(", ");
+      } else if(OperatorUtil.isDistinctOperator(k)){
+        sb.append(operationContextService.getOperation(k).doOperation(k, v)).append(" ").append(key).append(", ");
+      }
+    }
   }
 
   @Override

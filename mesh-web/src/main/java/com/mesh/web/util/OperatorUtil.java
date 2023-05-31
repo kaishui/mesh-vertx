@@ -89,4 +89,13 @@ public class OperatorUtil {
     }
     return value;
   }
+
+  /**
+   * 判断是否是distinct操作符
+   * @param k
+   * @return boolean
+   */
+  public boolean isDistinctOperator(String k) {
+    return CommonConstants.DISTINCT.contains(k + ",");
+  }
 }
