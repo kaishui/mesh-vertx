@@ -1,0 +1,21 @@
+{
+  "$project": {
+    "t.code_name": "code",
+    "t.table_Name": "tableName",
+    "t.start_date": "column1"
+  },
+  "$from": ["project-dev.dataset-dev.t"],
+  "$match": {
+    "$tuple": [
+      {"t.group_name": "fg1", "t.source_name": "ss1", "t.fund_code": "f1"},
+      {"t.group_name": "fg2", "t.source_name": "ss2", "t.fund_code": "f2"}
+    ],
+    "t.start_date": {
+      "$between": {"from": "2020-01-01", "to": "2020-01-31"}
+    },
+    "t.price":{"$gt": 10000}
+  },
+  "$sort": {"t.start_date": 1},
+  "$limit": 10,
+  "$skip": 0
+}
