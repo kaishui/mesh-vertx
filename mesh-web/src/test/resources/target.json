@@ -1,6 +1,6 @@
 {
   "$project": {
-    "t.code_name": "code",
+    "code": {"$distinct": "t.code_name"},
     "t.table_Name": "tableName",
     "t.start_date": "column1"
   },
@@ -13,7 +13,8 @@
     "t.start_date": {
       "$between": {"from": "2020-01-01", "to": "2020-01-31"}
     },
-    "t.price":{"$gt": 10000}
+    "t.price":{"$gt": 10000},
+    "t.text": {"$like": "%A%"}
   },
   "$sort": {"t.start_date": 1},
   "$limit": 10,

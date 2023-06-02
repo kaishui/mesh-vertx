@@ -4,11 +4,11 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 // 一个类负责解析输入的json对象
-public class JsonParser {
+public class ParamParser {
 
   private JsonObject input;
 
-  public JsonParser(String input) {
+  public ParamParser(String input) {
     this.input = new JsonObject(input);
   }
 
@@ -29,7 +29,17 @@ public class JsonParser {
   }
 
   public JsonArray getFrom() {
-    return input.getJsonArray("from");
+    Object from = input.getValue("from");
+    JsonArray fromArr = new JsonArray();
+    //  loop over the array
+    (from instanceof JsonArray ? (JsonArray) from : new JsonArray().add(from))
+      .forEach(table -> {
+        if (table instanceof String) {
+          table = getConsumerProject() + "." + getDatasetName() + "." + table;
+          fromArr.add(table);
+        }
+      });
+    return fromArr;
   }
 
   public JsonArray getSort() {

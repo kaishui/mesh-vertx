@@ -11,34 +11,41 @@
         {"fundGroup": "fg2", "sourceSystem": "ss2", "fund": "f2"}]
     },{
       "id": "column2",
-      "dataField": "t.start_date",
+      "dbField": "t.start_date",
       "dataType": "date",
       "value": {"fromDate": "2020-01-01", "toDate": "2020-01-31"}
     },{
       "id": "column3",
-      "dataField": "t.price",
+      "dbField": "t.price",
       "dataType": "number",
       "value": 10000,
       "condition": "greater"
+    },
+    {
+      "id": "column3",
+      "dbField": "t.text",
+      "dataType": "string",
+      "value": "A",
+      "condition": "contains"
     }
   ],
   "columns": [
     {
       "id": "code",
-      "dataField": "t.code_name",
+      "dbField": "t.code_name",
       "distinct": true
     },
     {
       "id": "tableName",
-      "dataField": "t.table_Name"
+      "dbField": "t.table_Name"
     },
     {
       "id": "column1",
-      "dataField": "t.start_date"
+      "dbField": "t.start_date"
     }
     ],
   "from": ["t"],
-  "sort": [{"id": "column1", "dataField": "t.start_date", "direction": "ASC"}],
+  "sort": [{"id": "column1", "dbField": "t.start_date", "direction": "ASC"}],
   "pageInfo": {
     "pageNumber": 1,
     "pageSize": 10
