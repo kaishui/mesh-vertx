@@ -173,7 +173,7 @@ public class ParamConverter {
     output.put("$skip", (pageNumber - 1) * pageSize);
   }
 
-  public String getOutput() {
-    return output.encode();
+  public JsonObject getOutput() {
+    return output;
   }
 }

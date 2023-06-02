@@ -2,6 +2,8 @@ package com.mesh.web.controller;
 
 import com.mesh.web.core.controller.RouterInterface;
 import com.mesh.web.service.StrategyContextService;
+import com.mesh.web.util.ParamConverter;
+import com.mesh.web.util.ParamParser;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -20,6 +22,30 @@ public class SqlBuilderController implements RouterInterface {
   public void router(Router router) {
     router.post("/generate/sql").handler(this::generateSql);
     router.post("/run/sql").handler(this::runSql);
+    router.get("/run/sql").handler(this::parseSql);
+  }
+
+  private void parseSql(RoutingContext routingContext) {
+    log.info("parse sql, parameter: {}", routingContext.body().asJsonObject());
+    String requestParam = routingContext.request().getParam("requestParam");
+
+    // 创建解析器和生成器
+    ParamParser parser = new ParamParser(requestParam);
+    // 解析参数
+    ParamConverter generator = new ParamConverter(parser);
+
+    log.info("requestParam: {}", requestParam);
+    boolean isValidJson = true;
+    if (isValidJson) {
+      // Use event bus to replace this
+      String sql = strategyContextService.parse(generator.getOutput());
+      log.info("sql: {}", sql);
+      // call jdbc query
+//      callJdbcQuery(sql);
+      routingContext.response().setStatusCode(200).end(sql);
+    } else {
+      routingContext.response().setStatusCode(400).end("Invalid json structure");
+    }
   }
 
   private void runSql(RoutingContext routingContext) {

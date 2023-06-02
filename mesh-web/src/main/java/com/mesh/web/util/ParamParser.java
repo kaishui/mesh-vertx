@@ -12,6 +12,11 @@ public class ParamParser {
     this.input = new JsonObject(input);
   }
 
+  public ParamParser(JsonObject input) {
+    this.input = input;
+  }
+
+
   public String getConsumerProject() {
     return input.getString("consumerProject");
   }
