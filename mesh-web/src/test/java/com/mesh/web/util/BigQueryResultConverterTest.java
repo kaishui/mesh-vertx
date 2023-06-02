@@ -1,11 +1,10 @@
 package com.mesh.web.util;
 
-import com.mesh.web.service.BaseTest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BigQueryResultConverterTest {
   private static final BigQueryResultConverter converter = new BigQueryResultConverter();

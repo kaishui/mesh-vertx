@@ -64,24 +64,11 @@ public class ParamConverter {
 
       // Check the dataType and handle accordingly
       switch (dataType) {
-        case "string":
+        case "string" -> {
           // If the dbField is a JsonObject, then it means we have a tuple
           if (dbField instanceof JsonObject) {
             // Convert the dbField and value to JsonObjects
-            JsonObject dbFieldObj = (JsonObject) dbField;
-            JsonArray tupleParts = new JsonArray();
-            // Check if the value is a JsonArray
-            if (value instanceof JsonArray arr) {
-              for (int i = 0; i < arr.size(); i++) {
-                JsonObject json = arr.getJsonObject(i);
-                JsonObject eachTuple = new JsonObject();
-                // Loop through the dbFieldObj keys and set the corresponding values from valueObj
-                for (String key : json.fieldNames()) {
-                  eachTuple.put(dbFieldObj.getString(key), json.getString(key));
-                }
-                tupleParts.add(eachTuple);
-              }
-            }
+            JsonArray tupleParts = tupleHandler((JsonObject) dbField, value);
             // Add the tuple to the output with the key "$tuple"
             match.put("$tuple", match.getJsonArray("$tuple", tupleParts));
           } else {
@@ -95,53 +82,89 @@ public class ParamConverter {
               match.put((String) dbField, new JsonObject().put("$like", "%" + value + "%"));
             }
           }
-          break;
-        case "date":
+        }
+        case "date" -> {
           // If the dataType is "date", then we have a range query
           // Convert the dbField and value to strings
           String dbFieldStr = (String) dbField;
           if (value instanceof JsonObject between) {
-            // Create a new JsonObject for the range query with "$between" operator
-            JsonObject rangeQuery = new JsonObject()
-              .put("$between", new JsonObject()
-                .put("from", between.getString("fromDate"))
-                .put("to", between.getString("toDate")));
+            JsonObject rangeQuery = betweenHandler(between);
             // Add the range query to the output with the dbFieldStr as key
             match.put(dbFieldStr, rangeQuery);
           } else {
             // If the value is not a JsonObject, then just put the value as it is
             match.put(dbFieldStr, value);
           }
-          break;
-        case "number":
+        }
+        case "number" -> {
           // If the dataType is "number", then we have a comparison query
           // Convert the dbField to string and value to number
           String dbColumn = (String) dbField;
           Number valueNum = (Number) value;
-
-          // Check the condition and handle accordingly
-          if (condition.equals("greater")) {
-            // If the condition is "greater", then use the "$gt" operator
-            match.put(dbColumn, new JsonObject().put("$gt", valueNum));
-          } else if (condition.equals("less")) {
-            // If the condition is "less", then use the "$lt" operator
-            match.put(dbColumn, new JsonObject().put("$lt", valueNum));
-          } else if (condition.equals("notEquals")) {
-            // If the condition is "notEquals", then use the "$ne" operator
-            match.put(dbColumn, new JsonObject().put("$ne", valueNum));
-          } else if (condition.equals("equals")) {
-            // If the condition is "equals", then use the "$eq" operator
-            match.put(dbColumn, new JsonObject().put("$eq", valueNum));
-          }
-          break;
-        default:
-          // If none of the above cases match, then ignore this item
-          break;
+          numberHandler(match, condition, dbColumn, valueNum);
+        }
+        default -> {
+        }
+        // If none of the above cases match, then ignore this item
       }
     }
 
     // Return the output json object
     output.put("$match", match);
+  }
+
+  private static void numberHandler(JsonObject match, String condition, String dbColumn, Number valueNum) {
+    // Check the condition and handle accordingly
+    switch (condition) {
+      case "greater" ->
+        // If the condition is "greater", then use the "$gt" operator
+        match.put(dbColumn, new JsonObject().put("$gt", valueNum));
+      case "less" ->
+        // If the condition is "less", then use the "$lt" operator
+        match.put(dbColumn, new JsonObject().put("$lt", valueNum));
+      case "notEquals" ->
+        // If the condition is "notEquals", then use the "$ne" operator
+        match.put(dbColumn, new JsonObject().put("$ne", valueNum));
+      case "equals" ->
+        // If the condition is "equals", then use the "$eq" operator
+        match.put(dbColumn, new JsonObject().put("$eq", valueNum));
+
+      default -> {
+        // If none of the above cases match, then ignore this item
+      }}
+  }
+
+  private static JsonObject betweenHandler(JsonObject between) {
+    // Create a new JsonObject for the range query with "$between" operator
+    JsonObject rangeQuery = new JsonObject()
+      .put("$between", new JsonObject()
+        .put("from", between.getString("fromDate"))
+        .put("to", between.getString("toDate")));
+    return rangeQuery;
+  }
+
+  /**
+   * tuple handler
+   * @param dbField
+   * @param value
+   * @return JsonArray
+   */
+  private static JsonArray tupleHandler(JsonObject dbField, Object value) {
+    JsonObject dbFieldObj = dbField;
+    JsonArray tupleParts = new JsonArray();
+    // Check if the value is a JsonArray
+    if (value instanceof JsonArray arr) {
+      for (int i = 0; i < arr.size(); i++) {
+        JsonObject json = arr.getJsonObject(i);
+        JsonObject eachTuple = new JsonObject();
+        // Loop through the dbFieldObj keys and set the corresponding values from valueObj
+        for (String key : json.fieldNames()) {
+          eachTuple.put(dbFieldObj.getString(key), json.getString(key));
+        }
+        tupleParts.add(eachTuple);
+      }
+    }
+    return tupleParts;
   }
 
   private void generateTablePrefix(JsonArray columns) {
