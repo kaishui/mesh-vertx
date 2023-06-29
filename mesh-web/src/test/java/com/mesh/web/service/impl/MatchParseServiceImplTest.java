@@ -104,6 +104,16 @@ class MatchParseServiceImplTest extends BaseTest {
     String expected = "where  (column1, column2, column3) in ( (90, '2013-12-01', '123'),  (100, '2013-12-03', '1233'))";
     assertEquals(expected, matchParseService.parse(inputObj));
   }
+  @Test
+  public void parseWithEmptyTupleIn() {
+    String jsonStr = """
+      {"$tuple": []}
+
+      """;
+    JsonObject inputObj = new JsonObject(jsonStr);
+    String expected = "";
+    assertEquals(expected, matchParseService.parse(inputObj));
+  }
 
   @Test
   public void testType() {

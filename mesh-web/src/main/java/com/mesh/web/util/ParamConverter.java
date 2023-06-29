@@ -6,15 +6,23 @@ import io.vertx.core.json.JsonObject;
 // 另一个类负责生成输出的json对象
 public class ParamConverter {
 
-  private JsonObject output;
+  private final JsonObject output;
+  private final JsonObject param;
 
   public ParamConverter(ParamParser parser) {
+    // main query
     output = new JsonObject();
+    // Create a new JSON object to store the sub sql
+    param = new JsonObject();
+
     generateProject(parser.getColumns());
     generateFrom(parser.getFrom());
     generateMatch(parser.getFilters());
     generateTablePrefix(parser.getColumns());
     generateSort(parser.getSort());
+    //add sub query
+    param.put("$project", new JsonArray().add("*").add(new JsonObject().put("totalRows", "count(1) over()")));
+    param.put("$from", output);
     generateLimitAndSkip(parser.getPageInfo());
   }
 
@@ -192,11 +200,11 @@ public class ParamConverter {
   private void generateLimitAndSkip(JsonObject pageInfo) {
     int pageNumber = pageInfo.getInteger("pageNumber");
     int pageSize = pageInfo.getInteger("pageSize");
-    output.put("$limit", pageSize);
-    output.put("$skip", (pageNumber - 1) * pageSize);
+    param.put("$limit", pageSize);
+    param.put("$skip", (pageNumber - 1) * pageSize);
   }
 
   public JsonObject getOutput() {
-    return output;
+    return param;
   }
 }

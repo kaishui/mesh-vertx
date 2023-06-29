@@ -26,6 +26,9 @@ public class TupleOperatorServiceImpl implements OperationService {
   }
 
   private String parseArray(JsonArray arr) {
+    if(arr.size() == 0){
+      return "";
+    }
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < arr.size(); i++) {
       // 拼接字符串 (key1, key2, key3) in

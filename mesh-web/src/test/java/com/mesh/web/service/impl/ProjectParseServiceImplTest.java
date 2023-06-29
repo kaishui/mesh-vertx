@@ -1,6 +1,7 @@
 package com.mesh.web.service.impl;
 
 import com.mesh.web.service.BaseTest;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -114,5 +115,29 @@ class ProjectParseServiceImplTest extends BaseTest {
         """;
     JsonObject jsonObject = new JsonObject(jsonstr);
     assertEquals("select 't.name' as column0", projectParseService.parse(jsonObject));
+  }
+
+  @Test
+  public void testJsonArr() {
+    String jsonstr = """
+      ["*", "t.name"]
+        """;
+    JsonArray jsonObject = new JsonArray(jsonstr);
+    assertEquals("select *, t.name", projectParseService.parse(jsonObject));
+  }
+
+  @Test
+  public void testJsonArrWithFun() {
+    String jsonstr = """
+      ["*", {"name": {"$sum": "t.name"}}]
+        """;
+    JsonArray jsonObject = new JsonArray(jsonstr);
+    assertEquals("select *, sum(t.name) as name", projectParseService.parse(jsonObject));
+  }
+
+  @Test
+  public void testString() {
+    String jsonstr = "*";
+    assertEquals("select *", projectParseService.parse(jsonstr));
   }
 }

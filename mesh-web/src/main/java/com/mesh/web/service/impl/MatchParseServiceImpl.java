@@ -29,7 +29,6 @@ public class MatchParseServiceImpl implements ParseStrategyService {
     // 如果值是一个对象，解析对象中的属性，并返回where子句
     if (value instanceof JsonObject object) {
       StringBuilder sb = new StringBuilder();
-      sb.append("where ");
       // 遍历对象中的每个键值对
       for (String key : object.fieldNames()) {
         Object val = object.getValue(key);
@@ -70,7 +69,7 @@ public class MatchParseServiceImpl implements ParseStrategyService {
       }
       // 去掉最后多余的and
       sb.setLength(sb.length() - 5);
-      return sb.toString();
+      return sb.isEmpty()? "": "where " + sb;
     }
     // 如果值是其他类型，返回空字符串
     return "";

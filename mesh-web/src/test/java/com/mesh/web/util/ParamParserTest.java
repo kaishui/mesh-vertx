@@ -59,4 +59,5 @@ public class ParamParserTest {
   public void testGetPageInfo() {
     assertTrue(paramParser.getPageInfo().size() == 2);
   }
+
 }
