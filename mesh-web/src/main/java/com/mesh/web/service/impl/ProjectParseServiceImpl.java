@@ -65,7 +65,7 @@ public class ProjectParseServiceImpl implements ParseStrategyService {
         handleOperations(sb, key, obj);
       } else if (val instanceof String) {
         // 如果值是一个字符串，表示有别名操作符，并给结果起别名为键名
-        sb.append(OperatorUtil.toStr(val)).append(" as ").append(key).append(", ");
+        sb.append(val).append(" as ").append(key).append(", ");
       }
     }
   }

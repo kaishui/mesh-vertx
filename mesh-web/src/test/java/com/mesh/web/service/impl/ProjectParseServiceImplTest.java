@@ -103,7 +103,7 @@ class ProjectParseServiceImplTest extends BaseTest {
         }
         """;
     JsonObject jsonObject = new JsonObject(jsonstr);
-    assertEquals("select 't.name' as column0, column2", projectParseService.parse(jsonObject));
+    assertEquals("select t.name as column0, column2", projectParseService.parse(jsonObject));
   }
 
   @Test
@@ -114,7 +114,7 @@ class ProjectParseServiceImplTest extends BaseTest {
         }
         """;
     JsonObject jsonObject = new JsonObject(jsonstr);
-    assertEquals("select 't.name' as column0", projectParseService.parse(jsonObject));
+    assertEquals("select t.name as column0", projectParseService.parse(jsonObject));
   }
 
   @Test
