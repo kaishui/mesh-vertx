@@ -23,6 +23,8 @@ public class SqlBuilderController implements RouterInterface {
     router.post("/generate/sql").handler(this::generateSql);
     router.post("/run/sql").handler(this::runSql);
     router.get("/run/sql").handler(this::parseSql);
+
+
   }
 
   private void parseSql(RoutingContext routingContext) {
