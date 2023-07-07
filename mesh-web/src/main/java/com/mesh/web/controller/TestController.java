@@ -3,6 +3,7 @@ package com.mesh.web.controller;
 import com.mesh.web.core.controller.RouterInterface;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import lombok.extern.slf4j.Slf4j;
@@ -51,9 +52,11 @@ public class TestController implements RouterInterface {
       Buffer buffer = Buffer.buffer();
 
       // 模拟生成大量数据
-      for (int i = 0; i < 1000; i++) {
-        buffer.appendString(new JsonObject().put("test", "value is toooooooo long" + i).toString());
+      JsonArray array = new JsonArray();
+      for (int i = 0; i < 10000; i++) {
+        array.add(new JsonObject().put("test", "value is toooooooo long" + i));
       }
+      buffer.appendString(array.toString());
 
       log.info("compress before length: {}", buffer.length());
       // 压缩Buffer
