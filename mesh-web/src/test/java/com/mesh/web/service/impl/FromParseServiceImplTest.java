@@ -57,7 +57,46 @@ class FromParseServiceImplTest extends BaseTest {
     JsonObject object = new JsonObject(jsonStr);
     String result = fromParseService.parse(object);
 
-    assertEquals("from ( select column1, column2 from table1 where column1 = funCode1 ) ", result);
+    assertEquals("from (select column1, column2 from table1 where column1 = funCode1) ", result);
   }
 
+
+  @Test
+  public void testProjectAlias() {
+
+    String jsonStr = """
+      { "T": {
+        "$project": {
+          "column1": 1,
+          "column2": 1
+        },
+        "$from": [
+          "table1"
+        ],
+        "$match": {
+          "column1" : "funCode1"
+        }
+      }}
+      """;
+
+    JsonObject object = new JsonObject(jsonStr);
+    String result = fromParseService.parse(object);
+
+    assertEquals("from (select column1, column2 from table1 where column1 = funCode1)  as T ", result);
+  }
+
+
+
+  @Test
+  public void testProjectStringAs() {
+
+    String jsonStr = """
+      { "T": "table1"}
+      """;
+
+    JsonObject object = new JsonObject(jsonStr);
+    String result = fromParseService.parse(object);
+
+    assertEquals("from table1 as T ", result);
+  }
 }
