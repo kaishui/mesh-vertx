@@ -2,7 +2,6 @@ package com.mesh.web.service.impl;
 
 import com.mesh.web.service.OperationContextService;
 import com.mesh.web.service.ParseStrategyService;
-import com.mesh.web.util.OperatorUtil;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +17,8 @@ public class PivotParseServiceImpl implements ParseStrategyService {
 
   @Autowired
   private OperationContextService operationContextService;
+  @Autowired
+  private SelectContextServiceImpl selectContextService;
 
   @Override
   public String parse(Object value) {
@@ -28,15 +29,12 @@ public class PivotParseServiceImpl implements ParseStrategyService {
       // 遍历对象中的每个键值对
       for (String key : object.fieldNames()) {
         Object val = object.getValue(key);
-
-        if (StringUtils.equals(key, "$for")) {//support $for keyword
+        //special handle
+        if (StringUtils.equals(key, "for")) {//support $for keyword
           sb.setLength(sb.length() - 2);
           sb.append(" FOR").append(operationContextService.parse((JsonObject) val));
         } else { // other operation
-          if (OperatorUtil.isAggregateOperator(key)) {
-            sb.append(operationContextService.getOperation(key).doOperation(key, value))
-              .append(" as ").append(key).append(", ");
-          }
+          sb.append(selectContextService.getOperation(key).doOperation(key, val)).append(", ");
         }
       }
       sb.append(") ");

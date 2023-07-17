@@ -65,7 +65,7 @@ public class OperatorUtil {
       return json;
     }
 
-    String[] order = {"$project", "$from", "$lookup", "$match", "$group", "$sort", "$limit", "$skip"};
+    String[] order = {"$project", "$from", "$pivot", "$lookup", "$match", "$group", "$sort", "$limit", "$skip"};
     JsonObject sortedJson = new JsonObject();
 
     for (String key : order) {
