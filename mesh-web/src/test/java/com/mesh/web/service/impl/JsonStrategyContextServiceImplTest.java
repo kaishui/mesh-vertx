@@ -44,4 +44,16 @@ class JsonStrategyContextServiceImplTest {
     assertEquals(matchParseService, strategyContextService.getStrategy(type));
 
   }
+
+  @Test
+  void TestFormIsJsonObject() {
+
+    String jsonStr = """
+      { "$project": "*", "$from": {"aliasTable": {"$project": {"c1": 1}, "$from": "T"}}}
+      """;
+    JsonObject jsonObject = new JsonObject(jsonStr);
+    String actual = strategyContextService.parse(jsonObject);
+    assertEquals("select * from (select c1 from T)  as aliasTable", actual);
+
+  }
 }
