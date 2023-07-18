@@ -16,4 +16,5 @@ public class CommonConstants {
   public static final String DATE_FUNCTION = "$FORMAT_DATE,$formatDate,$PARSE_DATE,$parseDate,";
   public static final String DISTINCT = "$distinct,$DISTINCT,";
   public static final String TUPLE = "$tuple,";
+  public static final String EXISTS = "$exists,";
 }
