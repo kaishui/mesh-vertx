@@ -56,4 +56,25 @@ class JsonStrategyContextServiceImplTest {
     assertEquals("select * from (select c1 from T)  as aliasTable", actual);
 
   }
+
+  @Test
+  void TestLookup() {
+
+    String jsonStr = """
+      { "$project": "*", "$from": {"aliasTable": {"$project": {"c1": 1, "view":1}, "$from": "T"}},
+        "$lookup": {
+      		"from": {"user": {"$project": {"c1": 1, "view":1}, "$from": "T", "$match": {"c1": {"$gte": 4}}}},
+      		"type": "left",
+      		"foreign": [
+      		{"aliasTable.view": "user.view"},
+      		{"aliasTable.c1": "user.c1"}
+      		]
+      	}
+      }
+      """;
+    JsonObject jsonObject = new JsonObject(jsonStr);
+    String actual = strategyContextService.parse(jsonObject);
+    String expected = "select * from (select c1, view from T)  as aliasTable   left join (select c1, view from T where c1 >= 4)  as user on (aliasTable.view=user.view and aliasTable.c1=user.c1)";
+    assertEquals(expected, actual);
+  }
 }

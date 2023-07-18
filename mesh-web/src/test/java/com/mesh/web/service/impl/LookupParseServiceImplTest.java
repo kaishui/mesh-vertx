@@ -67,13 +67,14 @@ class LookupParseServiceImplTest extends BaseTest {
       		"from": "table1",
       		"type": "right",
       		"foreign": [
-      		{"table1.view": "user.view"}
+      		{"table1.view": "user.view"},
+      		{"table1.c1": "user.c1"}
       		]
       	}
       	]
       """;
     JsonArray arr = new JsonArray(str);
-    String expectedResult = " left join table on (table.view=user.view)  right join table1 on (table1.view=user.view) ";
+    String expectedResult = " left join table on (table.view=user.view)  right join table1 on (table1.view=user.view and table1.c1=user.c1) ";
     String result = lookupParseServiceImpl.parse(arr);
     assertEquals(expectedResult, result);
   }

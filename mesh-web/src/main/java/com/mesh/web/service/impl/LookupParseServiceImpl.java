@@ -32,7 +32,7 @@ public class LookupParseServiceImpl implements ParseStrategyService {
       for (int i = 0; i < array.size(); i++) {
         sb.append(parseJson(array.getValue(i)));
       }
-    }else{
+    } else {
       sb.append(parseJson(value));
     }
 
@@ -65,22 +65,22 @@ public class LookupParseServiceImpl implements ParseStrategyService {
       if (foreign instanceof JsonObject foreignJson) {
         for (String key : foreignJson.fieldNames()) {
           String column = foreignJson.getString(key);
-          sb.append(key).append("=").append(column).append(", ");
+          sb.append(key).append("=").append(column).append(" and ");
         }
-        sb.setLength(sb.length() - 2);
-      }else if( foreign instanceof JsonArray fArr){
+        sb.setLength(sb.length() - 5);
+      } else if (foreign instanceof JsonArray fArr) {
         // special handle foreign: [{l.c1 = t.c1}, {t.c2 = l.c2}]
-        for(Object item : fArr){
-          if(item instanceof JsonObject elem){
+        for (Object item : fArr) {
+          if (item instanceof JsonObject elem) {
             for (String key : elem.fieldNames()) {
               String column = elem.getString(key);
-              sb.append(key).append("=").append(column).append(", ");
+              sb.append(key).append("=").append(column).append(" and ");
             }
           } else {
             // todo: throws an exception
           }
         }
-        sb.setLength(sb.length() -2);
+        sb.setLength(sb.length() - 5);
       }
       sb.append(") ");
     }
