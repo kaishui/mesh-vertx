@@ -12,7 +12,7 @@ public class AliasOperatorServiceImpl implements OperationService {
   public String doOperation(String key, Object value) {
     return switch (key) {
       case "$as" ->
-        // 如果是$as操作符，用as关键字表示，并返回字段名和别名
+        // In the case of the $as operator, use the as keyword and return the field name and alias
         value + " as ";
       case "$alias" ->
         // 如果是$alias操作符，用as关键字表示，并返回字段名和别名

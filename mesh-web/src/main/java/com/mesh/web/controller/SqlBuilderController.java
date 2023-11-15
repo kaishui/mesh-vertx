@@ -31,9 +31,9 @@ public class SqlBuilderController implements RouterInterface {
     log.info("parse sql, parameter: {}", routingContext.body().asJsonObject());
     String requestParam = routingContext.request().getParam("requestParam");
 
-    // 创建解析器和生成器
+    // Creating parsers and generators
     ParamParser parser = new ParamParser(requestParam);
-    // 解析参数
+    // parameterization
     ParamConverter generator = new ParamConverter(parser);
 
     log.info("requestParam: {}", requestParam);
