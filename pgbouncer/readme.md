@@ -39,3 +39,76 @@ https://dba.stackexchange.com/questions/56559/postgresql-high-availability-scala
 https://aws.amazon.com/cn/blogs/database/set-up-highly-available-pgbouncer-and-haproxy-with-amazon-aurora-postgresql-readers/
 https://developer.aliyun.com/article/509575
 ```
+
+
+```
+# HAproxy 配置示例
+global
+  # 设置日志输出到本地的 rsyslog 服务器
+  log 127.0.0.1 local0
+  # 设置最大并发连接数
+  maxconn 1000
+  # 设置运行用户和组
+  user haproxy
+  group haproxy
+  # 设置以守护进程模式运行
+  daemon
+
+defaults
+  # 设置默认的日志输出
+  log global
+  # 设置默认的工作模式为 TCP
+  mode tcp
+  # 设置默认的重试次数
+  retries 3
+  # 设置默认的超时时间
+  timeout connect 5s
+  timeout client 10s
+  timeout server 10s
+
+# 定义前端服务器
+frontend pgbouncer-in
+  # 监听 5000 端口
+  bind *:5000
+  # 根据请求的数据库名，选择不同的后端服务器组
+  acl db_master hdr(dbname) -i master
+  acl db_slave hdr(dbname) -i slave
+  use_backend pgbouncer-master if db_master
+  use_backend pgbouncer-slave if db_slave
+  # 设置默认的后端服务器组
+  default_backend pgbouncer-master
+  # 开启 HAproxy 的监控页面
+  stats enable
+  stats uri /haproxy
+  stats auth admin:admin
+
+# 定义后端服务器组 pgbouncer-master
+backend pgbouncer-master
+  # 使用 roundrobin 算法实现负载均衡
+  balance roundrobin
+  # 使用 tcp-check 实现健康检查
+  option tcp-check
+  tcp-check connect
+  tcp-check send PGB\0\0\0\0\0\0\0\0
+  tcp-check expect string OK
+  tcp-check send QUIT\0\0\0\0\0\0\0\0
+  tcp-check expect string closing
+  # 定义后端服务器
+  server pgb1 192.168.1.101:6432 check
+  server pgb2 192.168.1.102:6432 check
+
+# 定义后端服务器组 pgbouncer-slave
+backend pgbouncer-slave
+  # 使用 roundrobin 算法实现负载均衡
+  balance roundrobin
+  # 使用 tcp-check 实现健康检查
+  option tcp-check
+  tcp-check connect
+  tcp-check send PGB\0\0\0\0\0\0\0\0
+  tcp-check expect string OK
+  tcp-check send QUIT\0\0\0\0\0\0\0\0
+  tcp-check expect string closing
+  # 定义后端服务器
+  server pgb3 192.168.1.103:6432 check
+  server pgb4 192.168.1.104:6432 check
+```
