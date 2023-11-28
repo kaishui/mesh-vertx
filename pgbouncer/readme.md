@@ -39,7 +39,80 @@ https://dba.stackexchange.com/questions/56559/postgresql-high-availability-scala
 https://aws.amazon.com/cn/blogs/database/set-up-highly-available-pgbouncer-and-haproxy-with-amazon-aurora-postgresql-readers/
 https://developer.aliyun.com/article/509575
 ```
+你想看一个 HAproxy 对于 PgBouncer 的配置示例吗？我可以帮你生成一个。😊
 
+这是一个 HAproxy 对于 PgBouncer 的配置示例，它实现了以下功能：
+
+- 监听 5000 端口，接收 TCP 连接
+- 将连接请求分发到不同的 PgBouncer 节点，实现负载均衡和高可用性
+- PgBouncer 节点提供连接池服务，连接到后端的 PostgreSQL 服务器
+- 使用 leastconn 算法实现负载均衡，使用 tcp-check 实现健康检查
+- 开启 HAproxy 的监控页面，可以查看 PgBouncer 节点的状态和统计信息
+
+```ini
+# HAproxy 配置示例
+global
+  # 设置日志输出到本地的 rsyslog 服务器
+  log 127.0.0.1 local0
+  # 设置最大并发连接数
+  maxconn 1000
+  # 设置运行用户和组
+  user haproxy
+  group haproxy
+  # 设置以守护进程模式运行
+  daemon
+
+defaults
+  # 设置默认的日志输出
+  log global
+  # 设置默认的工作模式为 TCP
+  mode tcp
+  # 设置默认的重试次数
+  retries 3
+  # 设置默认的超时时间
+  timeout connect 5s
+  timeout client 10s
+  timeout server 10s
+  # 设置默认的日志格式和选项
+  option tcplog
+  option dontlognull
+
+# 定义前端服务器
+frontend pgbouncer-in
+  # 监听 5000 端口
+  bind *:5000
+  # 使用后端服务器组 pgbouncer
+  default_backend pgbouncer
+  # 开启 HAproxy 的监控页面
+  stats enable
+  stats uri /haproxy
+  stats auth admin:admin
+
+# 定义后端服务器组 pgbouncer
+backend pgbouncer
+  # 使用 leastconn 算法实现负载均衡
+  balance leastconn
+  # 使用 tcp-check 实现健康检查
+  option tcp-check
+  tcp-check connect port 6432
+  tcp-check send PGB\0\0\0\0\0\0\0\0
+  tcp-check expect string OK
+  tcp-check send QUIT\0\0\0\0\0\0\0\0
+  tcp-check expect string closing
+  # 定义后端服务器
+  server pgb1 192.168.1.101:6432 check
+  server pgb2 192.168.1.102:6432 check
+  server pgb3 192.168.1.103:6432 check
+```
+
+这是一个 HAproxy 对于 PgBouncer 的配置示例，希望对你有帮助。😊
+
+源: 与必应的对话， 11/28/2023
+(1) Set up highly available PgBouncer and HAProxy with Amazon Aurora .... https://aws.amazon.com/blogs/database/set-up-highly-available-pgbouncer-and-haproxy-with-amazon-aurora-postgresql-readers/.
+(2) PgBouncer config - GitHub Pages. https://postgres-cn.github.io/pgbouncer-doc/config.html.
+(3) 反向代理软件之HAproxy高级功能及配置 - 空白的旋律 - 博客园. https://www.cnblogs.com/xuanlv-0413/p/15085170.html.
+(4) HAProxy配置示例和需要考虑的问题-腾讯云开发者社区-腾讯云. https://cloud.tencent.com/developer/article/2047138.
+(5) 使用Patroni和HAProxy创建高度可用的PostgreSQL集群 - 腾讯云. https://cloud.tencent.com/developer/article/1185379.
 
 ```
 # HAproxy 配置示例
