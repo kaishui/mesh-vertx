@@ -50,10 +50,12 @@ public class VertxSpringApplication {
         VerticleFactory verticleFactory = context.getBean(SpringVerticleFactory.class);
         vertx.registerVerticleFactory(verticleFactory);
 
-        DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(1);
-        for (int i = 0; i < VERTICLE_COUNT; i++) {
-          vertx.deployVerticle(verticleFactory.prefix() + ":" + MainVerticle.class.getName(), deploymentOptions);
-        }
+        DeploymentOptions deploymentOptions = new DeploymentOptions().setInstances(4);
+        vertx.deployVerticle(verticleFactory.prefix() + ":" + MainVerticle.class.getName(), deploymentOptions);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+          vertx.close();
+        }));
       }
     });
   }
