@@ -17,26 +17,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.mesh.web.core.VertxSpringApplication.vertx;
+
 @Slf4j
 @Component
 public class LLM {
-  private final Vertx vertx;
   private final WebClient client;
   private final String model;
   private final int maxTokens;
   private final double temperature;
   private final String apiKey;
   private final String baseUrl;
+  private final String token ="";
 
-  public LLM(Vertx vertx) {
-    this.vertx = vertx;
+
+  public LLM() {
     WebClientOptions options = new WebClientOptions().setSsl(true).setTrustAll(true);
     this.client = WebClient.create(vertx, options);
     // Load configuration from environment variables or a config file
-    this.model = System.getenv().getOrDefault("OPENAI_MODEL", "gpt-3.5-turbo-1106");
+    this.model = System.getenv().getOrDefault("OPENAI_MODEL", "gpt-4o-mini");
     this.maxTokens = Integer.parseInt(System.getenv().getOrDefault("OPENAI_MAX_TOKENS", "4096"));
     this.temperature = Double.parseDouble(System.getenv().getOrDefault("OPENAI_TEMPERATURE", "0.7"));
-    this.apiKey = System.getenv().getOrDefault("OPENAI_API_KEY", "");
+    this.apiKey = System.getenv().getOrDefault("OPENAI_API_KEY", token);
     this.baseUrl = System.getenv().getOrDefault("OPENAI_BASE_URL", "https://api.openai.com/v1");
   }
 
@@ -126,7 +128,10 @@ public class LLM {
           promise.fail("LLM request failed with status code: " + response.statusCode());
         }
       })
-      .onFailure(promise::fail);
+      .onFailure(handler -> {
+        log.warn("Error", handler.getCause());
+        promise.fail(handler.getCause());
+      });
 
     return promise.future();
   }

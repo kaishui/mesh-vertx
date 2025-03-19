@@ -15,15 +15,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.mesh.web.core.VertxSpringApplication.vertx;
+
 @Component
 @Slf4j
 public class BrowserUseTool implements Tool {
 
-  private final Vertx vertx;
   private final WebClient client;
 
-  public BrowserUseTool(Vertx vertx) {
-    this.vertx = vertx;
+  public BrowserUseTool() {
     WebClientOptions options = new WebClientOptions().setSsl(true).setTrustAll(true);
     this.client = WebClient.create(vertx, options);
   }

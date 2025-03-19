@@ -2,7 +2,10 @@ package com.openmanus.agent;
 
 
 import com.openmanus.llm.LLM;
-import com.openmanus.tool.*;
+import com.openmanus.tool.BrowserUseTool;
+import com.openmanus.tool.FileSaver;
+import com.openmanus.tool.Terminate;
+import com.openmanus.tool.ToolCollection;
 import io.vertx.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,16 +20,16 @@ public class Manus extends ToolCallAgent {
 
   private static final List<String> SPECIAL_TOOL_NAMES = List.of(new Terminate().getName());
 
-  public Manus(ToolCollection availableTools, LLM llm, Vertx vertx) {
-    super(availableTools, llm, vertx);
+  public Manus(ToolCollection availableTools, LLM llm) {
+    super(availableTools, llm);
     this.systemPrompt = SYSTEM_PROMPT;
     this.nextStepPrompt = NEXT_STEP_PROMPT;
     this.specialToolNames = SPECIAL_TOOL_NAMES;
   }
 
-  public static ToolCollection getDefaultTools(Vertx vertx) {
+  public static ToolCollection getDefaultTools() {
     return new ToolCollection(
-      new BrowserUseTool(vertx),
+      new BrowserUseTool(),
       new FileSaver(),
       new Terminate()
     );

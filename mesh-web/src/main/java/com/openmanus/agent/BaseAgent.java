@@ -6,7 +6,6 @@ import com.openmanus.schema.Memory;
 import com.openmanus.schema.Message;
 import com.openmanus.tool.ToolCollection;
 import io.vertx.core.Future;
-import io.vertx.core.Vertx;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +16,10 @@ public abstract class BaseAgent {
   protected Memory memory = new Memory();
   protected LLM llm;
   protected AgentState state = AgentState.IDLE;
-  protected Vertx vertx;
 
-  public BaseAgent(ToolCollection availableTools, LLM llm, Vertx vertx) {
+  public BaseAgent(ToolCollection availableTools, LLM llm) {
     this.availableTools = availableTools;
     this.llm = llm;
-    this.vertx = vertx;
   }
 
   public abstract Future<Boolean> think();

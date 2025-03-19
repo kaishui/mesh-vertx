@@ -29,8 +29,8 @@ public class ToolCallAgent extends ReActAgent {
   protected String toolChoices = "auto";
   protected List<ToolCall> toolCalls = new ArrayList<>();
 
-  public ToolCallAgent(ToolCollection availableTools, LLM llm, Vertx vertx) {
-    super(availableTools, llm, vertx);
+  public ToolCallAgent(ToolCollection availableTools, LLM llm) {
+    super(availableTools, llm);
     if (availableTools.getTool("create_chat_completion") == null) {
       availableTools.addTool(new CreateChatCompletion());
     }

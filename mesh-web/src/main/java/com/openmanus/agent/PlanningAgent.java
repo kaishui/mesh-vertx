@@ -8,13 +8,15 @@ import com.openmanus.tool.Terminate;
 import com.openmanus.tool.ToolCollection;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
@@ -30,8 +32,8 @@ public class PlanningAgent extends ReActAgent {
   private Integer currentStepIndex;
   private Integer maxSteps = 20;
 
-  public PlanningAgent(ToolCollection availableTools, LLM llm, Vertx vertx) {
-    super(availableTools, llm, vertx);
+  public PlanningAgent(ToolCollection availableTools, LLM llm) {
+    super(availableTools, llm);
     this.activePlanId = "plan_" + Instant.now().getEpochSecond();
     if (availableTools.getTool("planning") == null) {
       availableTools.addTool(new PlanningTool());

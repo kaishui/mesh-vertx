@@ -14,7 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
 
-@ComponentScan("com.mesh")
+@ComponentScan("com")
 @Configuration
 @Slf4j
 public class VertxSpringApplication {

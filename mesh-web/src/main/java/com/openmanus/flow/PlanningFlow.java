@@ -1,6 +1,8 @@
 package com.openmanus.flow;
 
 import com.openmanus.agent.BaseAgent;
+import com.openmanus.agent.PlanningAgent;
+import com.openmanus.agent.ToolCallAgent;
 import com.openmanus.llm.LLM;
 import com.openmanus.schema.AgentState;
 import com.openmanus.schema.Message;
@@ -8,12 +10,9 @@ import com.openmanus.schema.ToolCall;
 import com.openmanus.tool.PlanningTool;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.log;
-import org.slf4j.logFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,40 +23,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 @Component
 public class PlanningFlow extends BaseFlow {
-  @Autowired
-  private final LLM llm;
-  @Autowired
-  private final PlanningTool planningTool;
-  private final List<String> executorKeys;
+  private LLM llm;
+  private PlanningTool planningTool;
+  private List<String> executorKeys;
   private String activePlanId;
   private Integer currentStepIndex;
+  private Map<String, BaseAgent> agents;
+  private Optional<BaseAgent> primaryAgent;
 
-  public PlanningFlow(Map<String, BaseAgent> agents, LLM llm, Vertx vertx) {
-    super(agents, vertx);
+  @Autowired
+  public PlanningFlow(Map<String, BaseAgent> agents, LLM llm, PlanningTool planningTool) {
     this.llm = llm;
-    this.planningTool = new PlanningTool();
-    this.executorKeys = new ArrayList<>(agents.keySet());
+    this.planningTool = planningTool;
+    this.executorKeys = new ArrayList<>(agents == null ? new ArrayList<>() : agents.keySet());
     this.activePlanId = "plan_" + Instant.now().getEpochSecond();
-  }
-
-  public PlanningFlow(List<BaseAgent> agentList, LLM llm, Vertx vertx) {
-    super(agentList, vertx);
-    this.llm = llm;
-    this.planningTool = new PlanningTool();
-    this.executorKeys = new ArrayList<>();
-    for (int i = 0; i < agentList.size(); i++) {
-      this.executorKeys.add("agent_" + i);
-    }
-    this.activePlanId = "plan_" + Instant.now().getEpochSecond();
-  }
-
-  public PlanningFlow(BaseAgent agent, LLM llm, Vertx vertx) {
-    super(agent, vertx);
-    this.llm = llm;
-    this.planningTool = new PlanningTool();
-    this.executorKeys = new ArrayList<>();
-    this.executorKeys.add("primary");
-    this.activePlanId = "plan_" + Instant.now().getEpochSecond();
+    this.primaryAgent =  Optional.of(agents.get("planningAgent"));
   }
 
   private BaseAgent getExecutor(String stepType) {
@@ -75,14 +55,17 @@ public class PlanningFlow extends BaseFlow {
   @Override
   public Future<String> execute(String input) {
     Promise<String> promise = Promise.promise();
-    if (primaryAgent.isEmpty()) {
-      promise.fail("No primary agent available");
-      return promise.future();
+    if ( primaryAgent.isEmpty()) {
+      agents.forEach((key, agent) -> {
+        if (agent.getState() == AgentState.RUNNING) {
+          primaryAgent = Optional.of(agent);
+        } else {
+          executorKeys.add(key);
+        }
+      });
     }
     createInitialPlan(input)
-      .compose(v -> {
-        return executeLoop();
-      })
+      .compose(v -> executeLoop())
       .onSuccess(promise::complete)
       .onFailure(promise::fail);
     return promise.future();
@@ -92,7 +75,7 @@ public class PlanningFlow extends BaseFlow {
     Promise<String> promise = Promise.promise();
     executeNextStep()
       .compose(result -> {
-        if (result.equals("Plan completed")) {
+        if ("Plan completed".equals(result)) {
           return finalizePlan();
         } else {
           return executeLoop();
@@ -144,7 +127,7 @@ public class PlanningFlow extends BaseFlow {
       } else {
         status = stepStatuses.getString(i);
       }
-      if (status.equals("not_started") || status.equals("in_progress")) {
+      if ("not_started".equals(status) || "in_progress".equals(status)) {
         currentStepIndex = i;
         JsonObject stepInfo = new JsonObject().put("text", steps.getString(i));
         String step = steps.getString(i);
@@ -173,20 +156,18 @@ public class PlanningFlow extends BaseFlow {
       .onSuccess(planStatus -> {
         String stepText = stepInfo.getString("text", "Step " + currentStepIndex);
         String stepPrompt = String.format("""
-                                    CURRENT PLAN STATUS:
-                                    %s
+          CURRENT PLAN STATUS:
+          %s
 
-                                    YOUR CURRENT TASK:
-                                    You are now working on step %d: "%s"
+          YOUR CURRENT TASK:
+          You are now working on step %d: "%s"
 
-                                    Please execute this step using the appropriate tools. When you're done, provide a summary of what you accomplished.
-                                    """, planStatus, currentStepIndex, stepText);
+          Please execute this step using the appropriate tools. When you're done, provide a summary of what you accomplished.
+          """, planStatus, currentStepIndex, stepText);
         executor.run(stepPrompt)
-          .onSuccess(stepResult -> {
-            markStepCompleted()
-              .onSuccess(v -> promise.complete(stepResult))
-              .onFailure(promise::fail);
-          })
+          .onSuccess(stepResult -> markStepCompleted()
+            .onSuccess(v -> promise.complete(stepResult))
+            .onFailure(promise::fail))
           .onFailure(promise::fail);
       })
       .onFailure(promise::fail);
@@ -306,18 +287,18 @@ public class PlanningFlow extends BaseFlow {
       .onSuccess(planText -> {
         Message systemMessage = Message.systemMessage("You are a planning assistant. Your task is to summarize the completed plan.");
         Message userMessage = Message.userMessage(String.format("The plan has been completed. Here is the final plan status:\n\n%s\n\nPlease provide a summary of what was accomplished and any final thoughts.", planText));
-        llm.ask(List.of(userMessage.toJson()), List.of(systemMessage.toJson()), false)
+        llm.ask(List.of(systemMessage.toJson(), userMessage.toJson()), null, false)
           .onSuccess(response -> promise.complete(String.format("Plan completed:\n\n%s", response)))
           .onFailure(throwable -> {
             log.error("Error finalizing plan with LLM: {}", throwable.getMessage());
             if (primaryAgent.isPresent()) {
               String summaryPrompt = String.format("""
-                                                    The plan has been completed. Here is the final plan status:
+                The plan has been completed. Here is the final plan status:
 
-                                                    %s
+                %s
 
-                                                    Please provide a summary of what was accomplished and any final thoughts.
-                                                    """, planText);
+                Please provide a summary of what was accomplished and any final thoughts.
+                """, planText);
               primaryAgent.get().run(summaryPrompt)
                 .onSuccess(summary -> promise.complete(String.format("Plan completed:\n\n%s", summary)))
                 .onFailure(promise::fail);
@@ -335,12 +316,12 @@ public class PlanningFlow extends BaseFlow {
     log.info("Creating initial plan with ID: {}", activePlanId);
     Message systemMessage = Message.systemMessage("You are a planning assistant. Your task is to create a detailed plan with clear steps.");
     Message userMessage = Message.userMessage(String.format("Create a detailed plan to accomplish this task: %s", request));
-    llm.ask_tool(List.of(userMessage.toJson()), List.of(systemMessage.toJson()), "required")
+    llm.ask_tool(List.of(systemMessage.toJson(), userMessage.toJson()), List.of(planningTool.getParameters()), "required")
       .onSuccess(response -> {
         if (response.getToolCalls().isPresent()) {
           AtomicBoolean planCreated = new AtomicBoolean(false);
           for (ToolCall toolCall : response.getToolCalls().get()) {
-            if (toolCall.getFunction().getName().equals("planning")) {
+            if ("planning".equals(toolCall.getFunction().getName())) {
               JsonObject toolInput = new JsonObject(toolCall.getFunction().getArguments());
               toolInput.put("plan_id", activePlanId);
               planningTool.execute(toolInput)
@@ -367,7 +348,33 @@ public class PlanningFlow extends BaseFlow {
           promise.complete();
         }
       })
-      .onFailure(promise::fail);
+      .onFailure(handler -> {
+        log.info(" error message: {}", handler.getMessage());
+        promise.fail(handler.getMessage());
+      });
     return promise.future();
+  }
+
+  public Map<String, BaseAgent> getAgents() {
+    return agents;
+  }
+
+  public Optional<BaseAgent> getPrimaryAgent() {
+    return primaryAgent;
+  }
+
+
+  public void addAgent(String name, BaseAgent agent) {
+    this.agents.put(name, agent);
+    if (!this.primaryAgent.isPresent()) {
+      this.primaryAgent = Optional.of(agent);
+    }
+  }
+
+  public void addAgents(Map<String, BaseAgent> agents) {
+    this.agents.putAll(agents);
+    if (!this.primaryAgent.isPresent() && !agents.isEmpty()) {
+      this.primaryAgent = agents.values().stream().findFirst();
+    }
   }
 }

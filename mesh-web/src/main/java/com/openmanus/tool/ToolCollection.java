@@ -3,6 +3,7 @@ package com.openmanus.tool;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 public class ToolCollection {
   private final Map<String, Tool> toolMap;
 
+  @Autowired
   public ToolCollection(Tool... tools) {
     this.toolMap = new HashMap<>();
     for (Tool tool : tools) {

@@ -3,7 +3,6 @@ package com.openmanus.flow;
 
 import com.openmanus.agent.BaseAgent;
 import io.vertx.core.Future;
-import io.vertx.core.Vertx;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,14 +11,11 @@ import java.util.Optional;
 
 public abstract class BaseFlow {
 
-  protected Map<String, BaseAgent> agents;
-  protected Optional<BaseAgent> primaryAgent;
-  protected Vertx vertx;
+  /*
 
-  public BaseFlow(Map<String, BaseAgent> agents, Vertx vertx) {
+  public BaseFlow(Map<String, BaseAgent> agents) {
     this.agents = new HashMap<>();
     this.primaryAgent = Optional.empty();
-    this.vertx = vertx;
 
     if (agents != null) {
       if (agents.values().stream().findFirst().isPresent()) {
@@ -29,17 +25,15 @@ public abstract class BaseFlow {
     }
   }
 
-  public BaseFlow(BaseAgent agent, Vertx vertx) {
+  public BaseFlow(BaseAgent agent) {
     this.agents = new HashMap<>();
     this.primaryAgent = Optional.of(agent);
     this.agents.put("primary", agent);
-    this.vertx = vertx;
   }
 
-  public BaseFlow(List<BaseAgent> agentList, Vertx vertx) {
+  public BaseFlow(List<BaseAgent> agentList) {
     this.agents = new HashMap<>();
     this.primaryAgent = Optional.empty();
-    this.vertx = vertx;
     if (agentList != null && !agentList.isEmpty()) {
       this.primaryAgent = Optional.of(agentList.get(0));
       for (int i = 0; i < agentList.size(); i++) {
@@ -47,18 +41,18 @@ public abstract class BaseFlow {
       }
     }
   }
-
-  public Map<String, BaseAgent> getAgents() {
+*/
+/*  public Map<String, BaseAgent> getAgents() {
     return agents;
   }
 
   public Optional<BaseAgent> getPrimaryAgent() {
     return primaryAgent;
-  }
+  }*/
 
   public abstract Future<String> execute(String input);
 
-  public void addAgent(String name, BaseAgent agent) {
+  /*public void addAgent(String name, BaseAgent agent) {
     this.agents.put(name, agent);
     if (!this.primaryAgent.isPresent()) {
       this.primaryAgent = Optional.of(agent);
@@ -70,5 +64,5 @@ public abstract class BaseFlow {
     if (!this.primaryAgent.isPresent() && !agents.isEmpty()) {
       this.primaryAgent = agents.values().stream().findFirst();
     }
-  }
+  }*/
 }

@@ -12,7 +12,6 @@
   <modules>
     <module>web-core</module>
     <module>mesh-web</module>
-    <!--        <module>mesh-service</module>-->
   </modules>
 
 
@@ -20,27 +19,25 @@
     <revision>1.0.0-SNAPSHOT</revision>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-    <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
-    <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-    <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+    <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
+    <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+    <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
 
-    <vertx.version>4.4.1</vertx.version>
+    <vertx.version>4.5.13</vertx.version>
     <junit-jupiter.version>5.9.1</junit-jupiter.version>
 
     <main.verticle>com.mesh.web.core.MainVerticle</main.verticle>
     <launcher.class>io.vertx.core.Launcher</launcher.class>
     <spring-boot.version>3.0.6</spring-boot.version>
-    <lombok.version>1.18.26</lombok.version>
-    <log4j.version>2.20.0</log4j.version>
-    <slf4j.version>2.0.7</slf4j.version>
+    <lombok.version>1.18.36</lombok.version>
+    <log4j.version>2.24.3</log4j.version>
     <mockito.version>5.3.1</mockito.version>
-    <spring-framework.version>6.0.8</spring-framework.version>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
+    <spring-framework.version>6.2.4</spring-framework.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <lombok.version>1.18.30</lombok.version>
-    <slf4j.version>2.0.9</slf4j.version>
+    <slf4j.version>2.0.17</slf4j.version>
     <logback.version>1.4.14</logback.version>
     <google.api.client.version>2.2.0</google.api.client.version>
     <openai.version>0.28.0</openai.version>
@@ -48,6 +45,8 @@
     <openai-java.version>0.34.1</openai-java.version>
     <selenium-chrome-driver.version>4.18.1</selenium-chrome-driver.version>
     <jsoup.version>1.19.1</jsoup.version>
+    <commons-lang3.version>3.17.0</commons-lang3.version>
+    <byte-buddy.version>1.17.2</byte-buddy.version>
   </properties>
 
   <dependencyManagement>
@@ -179,6 +178,17 @@
         <artifactId>spring-test</artifactId>
         <version>${spring-framework.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy</artifactId>
+        <version>${byte-buddy.version}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -203,7 +213,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin.version}</version>
         <configuration>
-          <release>20</release>
+          <release>17</release>
         </configuration>
       </plugin>
       <plugin>

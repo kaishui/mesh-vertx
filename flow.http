@@ -1,0 +1,9 @@
+### GET request to example server
+POST {{url}}/flow
+Content-Type: application/json
+
+{
+  "message": "give me 15 days of travel in China"
+}
+
+###

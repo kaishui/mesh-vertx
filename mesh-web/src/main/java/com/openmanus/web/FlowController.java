@@ -2,16 +2,14 @@ package com.openmanus.web;
 
 import com.mesh.web.core.controller.RouterInterface;
 import com.openmanus.flow.PlanningFlow;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
-@Component
+@Controller
 @Slf4j
 public class FlowController implements RouterInterface {
 

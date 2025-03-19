@@ -22,8 +22,8 @@ public abstract class ReActAgent extends BaseAgent {
   protected String systemPrompt = "You are a helpful assistant.";
   protected List<ToolCall> toolCalls = new ArrayList<>();
 
-  public ReActAgent(ToolCollection availableTools, LLM llm, Vertx vertx) {
-    super(availableTools, llm, vertx);
+  public ReActAgent(ToolCollection availableTools, LLM llm) {
+    super(availableTools, llm);
   }
 
   @Override

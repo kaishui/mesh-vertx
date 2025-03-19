@@ -1,7 +1,6 @@
 package com.openmanus.schema;
 
 import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
