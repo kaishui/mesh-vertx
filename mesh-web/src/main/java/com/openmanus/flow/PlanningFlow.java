@@ -12,8 +12,9 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.log;
+import org.slf4j.logFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -23,8 +24,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 @Component
 public class PlanningFlow extends BaseFlow {
-  private static final Logger logger = LoggerFactory.getLogger(PlanningFlow.class);
+  @Autowired
   private final LLM llm;
+  @Autowired
   private final PlanningTool planningTool;
   private final List<String> executorKeys;
   private String activePlanId;
@@ -128,7 +130,7 @@ public class PlanningFlow extends BaseFlow {
   private Future<JsonObject> getCurrentStepInfo() {
     Promise<JsonObject> promise = Promise.promise();
     if (activePlanId == null || !planningTool.getPlans().containsKey(activePlanId)) {
-      logger.error("Plan with ID {} not found", activePlanId);
+      log.error("Plan with ID {} not found", activePlanId);
       promise.fail("Plan with ID " + activePlanId + " not found");
       return promise.future();
     }
@@ -203,11 +205,11 @@ public class PlanningFlow extends BaseFlow {
         .put("step_index", currentStepIndex)
         .put("step_status", "completed"))
       .onSuccess(result -> {
-        logger.info("Marked step {} as completed in plan {}", currentStepIndex, activePlanId);
+        log.info("Marked step {} as completed in plan {}", currentStepIndex, activePlanId);
         promise.complete();
       })
       .onFailure(throwable -> {
-        logger.warn("Failed to update plan status: {}", throwable.getMessage());
+        log.warn("Failed to update plan status: {}", throwable.getMessage());
         if (activePlanId != null && planningTool.getPlans().containsKey(activePlanId)) {
           JsonObject planData = planningTool.getPlans().get(activePlanId);
           JsonArray stepStatuses = planData.getJsonArray("step_statuses");
@@ -232,7 +234,7 @@ public class PlanningFlow extends BaseFlow {
         promise.complete(toolResultJson.getString("output"));
       })
       .onFailure(throwable -> {
-        logger.error("Error getting plan: {}", throwable.getMessage());
+        log.error("Error getting plan: {}", throwable.getMessage());
         promise.complete(generatePlanTextFromStorage());
       });
     return promise.future();
@@ -293,7 +295,7 @@ public class PlanningFlow extends BaseFlow {
       }
       return planText.toString();
     } catch (Exception e) {
-      logger.error("Error generating plan text from storage: {}", e.getMessage());
+      log.error("Error generating plan text from storage: {}", e.getMessage());
       return "Error: Unable to retrieve plan with ID " + activePlanId;
     }
   }
@@ -307,7 +309,7 @@ public class PlanningFlow extends BaseFlow {
         llm.ask(List.of(userMessage.toJson()), List.of(systemMessage.toJson()), false)
           .onSuccess(response -> promise.complete(String.format("Plan completed:\n\n%s", response)))
           .onFailure(throwable -> {
-            logger.error("Error finalizing plan with LLM: {}", throwable.getMessage());
+            log.error("Error finalizing plan with LLM: {}", throwable.getMessage());
             if (primaryAgent.isPresent()) {
               String summaryPrompt = String.format("""
                                                     The plan has been completed. Here is the final plan status:
@@ -330,7 +332,7 @@ public class PlanningFlow extends BaseFlow {
 
   private Future<Void> createInitialPlan(String request) {
     Promise<Void> promise = Promise.promise();
-    logger.info("Creating initial plan with ID: {}", activePlanId);
+    log.info("Creating initial plan with ID: {}", activePlanId);
     Message systemMessage = Message.systemMessage("You are a planning assistant. Your task is to create a detailed plan with clear steps.");
     Message userMessage = Message.userMessage(String.format("Create a detailed plan to accomplish this task: %s", request));
     llm.ask_tool(List.of(userMessage.toJson()), List.of(systemMessage.toJson()), "required")
@@ -343,7 +345,7 @@ public class PlanningFlow extends BaseFlow {
               toolInput.put("plan_id", activePlanId);
               planningTool.execute(toolInput)
                 .onSuccess(result -> {
-                  logger.info("Plan creation result: {}", result);
+                  log.info("Plan creation result: {}", result);
                   planCreated.set(true);
                   promise.complete();
                 })
@@ -352,7 +354,7 @@ public class PlanningFlow extends BaseFlow {
             }
           }
           if (!planCreated.get()) {
-            logger.warn("Creating default plan");
+            log.warn("Creating default plan");
             planningTool.execute(new JsonObject()
                 .put("command", "create")
                 .put("plan_id", activePlanId)
