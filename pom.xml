@@ -11,7 +11,7 @@
   <name>${project.artifactId}</name>
   <modules>
     <module>web-core</module>
-            <module>mesh-web</module>
+    <module>mesh-web</module>
     <!--        <module>mesh-service</module>-->
   </modules>
 
@@ -36,10 +36,73 @@
     <slf4j.version>2.0.7</slf4j.version>
     <mockito.version>5.3.1</mockito.version>
     <spring-framework.version>6.0.8</spring-framework.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <lombok.version>1.18.30</lombok.version>
+    <slf4j.version>2.0.9</slf4j.version>
+    <logback.version>1.4.14</logback.version>
+    <google.api.client.version>2.2.0</google.api.client.version>
+    <openai.version>0.28.0</openai.version>
+    <google.auth.version>1.23.0</google.auth.version>
+    <openai-java.version>0.34.1</openai-java.version>
+    <selenium-chrome-driver.version>4.18.1</selenium-chrome-driver.version>
+    <jsoup.version>1.19.1</jsoup.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-chrome-driver</artifactId>
+        <version>${selenium-chrome-driver.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.openai</groupId>
+        <artifactId>openai-java</artifactId>
+        <version>${openai-java.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jsoup</groupId>
+        <artifactId>jsoup</artifactId>
+        <version>${jsoup.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.api-client</groupId>
+        <artifactId>google-api-client</artifactId>
+        <version>${google.api.client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.auth</groupId>
+        <artifactId>google-auth-library-oauth2-http</artifactId>
+        <version>${google.auth.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.theokanning.openai-gpt3-java</groupId>
+        <artifactId>service</artifactId>
+        <version>${openai.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.theokanning.openai-gpt3-java</groupId>
+        <artifactId>client</artifactId>
+        <version>${openai.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>com.mesh</groupId>
